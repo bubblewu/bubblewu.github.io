@@ -4,6 +4,31 @@
   
     
     <entry>
+      <title>my test</title>
+      <link href="/ckb6dsj1h0000huyd2fxk6q53/"/>
+      <url>/ckb6dsj1h0000huyd2fxk6q53/</url>
+      
+        <content type="html"><![CDATA[<a id="more"></a><p><br><br><span class="btn large center"><a href="<https://github.com/wongqingbin/blog/issues>" title="向博主反馈问题"><i class="fas fa-paper-plane"></i>向博主反馈问题</a></span></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> default </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> default </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>celery和redis交互全流程解析</title>
       <link href="/ckb6dcew20029c4yd7bg885jl/"/>
       <url>/ckb6dcew20029c4yd7bg885jl/</url>
