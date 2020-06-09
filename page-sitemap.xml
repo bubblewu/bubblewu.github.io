@@ -2,90 +2,90 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     <url>
-        <loc>http://localhost:4000</loc>
+        <loc>https://bubblewu.github.io</loc>
         <changefreq>daily</changefreq>
         <priority>1</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/about/</loc>
+        <loc>https://bubblewu.github.io/about/</loc>
         <lastmod>2020-06-08T09:17:17.868Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/tags/</loc>
+        <loc>https://bubblewu.github.io/msgboard/</loc>
         <lastmod>2020-06-08T03:32:03.131Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/msgboard/</loc>
+        <loc>https://bubblewu.github.io/tags/</loc>
         <lastmod>2020-06-08T03:32:03.131Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/categories/</loc>
+        <loc>https://bubblewu.github.io/categories/</loc>
         <lastmod>2020-06-08T03:32:03.130Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/friends/</loc>
+        <loc>https://bubblewu.github.io/contributors/</loc>
         <lastmod>2020-06-08T03:32:03.130Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/contributors/</loc>
+        <loc>https://bubblewu.github.io/list/</loc>
         <lastmod>2020-06-08T03:32:03.130Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/list/</loc>
+        <loc>https://bubblewu.github.io/friends/</loc>
         <lastmod>2020-06-08T03:32:03.130Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/adb/installapk/</loc>
+        <loc>https://bubblewu.github.io/adb/installapk/</loc>
         <lastmod>2020-06-08T03:32:03.129Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/adb/pm/</loc>
+        <loc>https://bubblewu.github.io/adb/pm/</loc>
         <lastmod>2020-06-08T03:32:03.129Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/adb/sdk/</loc>
+        <loc>https://bubblewu.github.io/adb/sdk/</loc>
         <lastmod>2020-06-08T03:32:03.129Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/adb/</loc>
+        <loc>https://bubblewu.github.io/adb/</loc>
         <lastmod>2020-06-08T03:32:03.128Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>http://localhost:4000/adb/debug/</loc>
+        <loc>https://bubblewu.github.io/adb/debug/</loc>
         <lastmod>2020-06-08T03:32:03.128Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
