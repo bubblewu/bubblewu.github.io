@@ -15,13 +15,6 @@
     </url>
     
     <url>
-        <loc>https://bubblewu.github.io/msgboard/</loc>
-        <lastmod>2020-06-08T03:32:03.131Z</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>
-    
-    <url>
         <loc>https://bubblewu.github.io/tags/</loc>
         <lastmod>2020-06-08T03:32:03.131Z</lastmod>
         <changefreq>weekly</changefreq>
@@ -29,14 +22,14 @@
     </url>
     
     <url>
-        <loc>https://bubblewu.github.io/categories/</loc>
-        <lastmod>2020-06-08T03:32:03.130Z</lastmod>
+        <loc>https://bubblewu.github.io/msgboard/</loc>
+        <lastmod>2020-06-08T03:32:03.131Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>https://bubblewu.github.io/contributors/</loc>
+        <loc>https://bubblewu.github.io/friends/</loc>
         <lastmod>2020-06-08T03:32:03.130Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
@@ -50,21 +43,28 @@
     </url>
     
     <url>
-        <loc>https://bubblewu.github.io/friends/</loc>
+        <loc>https://bubblewu.github.io/contributors/</loc>
         <lastmod>2020-06-08T03:32:03.130Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
-        <loc>https://bubblewu.github.io/adb/installapk/</loc>
-        <lastmod>2020-06-08T03:32:03.129Z</lastmod>
+        <loc>https://bubblewu.github.io/categories/</loc>
+        <lastmod>2020-06-08T03:32:03.130Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
     
     <url>
         <loc>https://bubblewu.github.io/adb/pm/</loc>
+        <lastmod>2020-06-08T03:32:03.129Z</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <url>
+        <loc>https://bubblewu.github.io/adb/installapk/</loc>
         <lastmod>2020-06-08T03:32:03.129Z</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
