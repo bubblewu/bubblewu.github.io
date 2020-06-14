@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme="https://volantis.js.org/#20200605">
+  <meta charset="utf-8">
+  <!-- SEO相关 -->
+  
+    
+  
+  <!-- 渲染优化 -->
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- 页面元数据 -->
+  
+    <title>String类的intern()方法 - 大泡泡的笔记</title>
+  
+    <meta name="keywords" content="Java">
+  
+  
+    <meta name="description" content="String::intern()方法概述String::intern()是一个Native方法，用于返回该对象在常量池中的引用。
+1public native String intern();
+作用：如果字符串常量池中已经包含一个等于该String对象的字符串，则返回代表池中这个字符串的String对象的引用；否...">
+  
+
+  <!-- feed -->
+  
+
+  <!-- import meta -->
+  
+    
+      <meta name="theme-color" content="#FFFFFF">
+    
+      <meta name="msapplication-TileColor" content="#1BC3FB">
+    
+      <meta name="msapplication-config" content="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/browserconfig.xml">
+    
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13/css/all.min.css">
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+
+  
+
+  
+  <link rel="shortcut icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/wongqingbin/PicGo/favicon.ico">
+  
+
+  
+
+  <!-- import link -->
+  
+  
+  <link rel="shortcut icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicon.ico">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/favicon-32x32.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/apple-touch-icon.png">
+  <link rel="mask-icon" color="#1BC3FB" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/safari-pinned-tab.svg">
+  <link rel="manifest" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/site.webmanifest">
+  
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2.6.5/css/style.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+</head>
+
+<body>
+  
+  <div id="loading-bar-wrapper">
+  <div id="loading-bar"></div>
+</div>
+<header class="l_header shadow blur">
+  <div class="container">
+  <div class="wrapper">
+    <div class="nav-sub">
+      <p class="title"></p>
+      <ul class="switcher nav-list-h">
+        <li><a class="s-comment fas fa-comments fa-fw" target="_self" href="javascript:void(0)"></a></li>
+        
+          <li><a class="s-toc fas fa-list fa-fw" target="_self" href="javascript:void(0)"></a></li>
+        
+      </ul>
+    </div>
+		<div class="nav-main">
+      
+        
+        <a class="title flat-box" target="_self" href="/">
+          
+          
+          
+            Bubble
+          
+          
+        </a>
+      
+
+			<div class="menu navigation">
+				<ul class="nav-list-h">
+          
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/" id="home">
+                  <i class="fas fa-home fa-fw fa-fw"></i>主页
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/categories/" id="categories">
+                  <i class="fas fa-folder-open fa-fw"></i>分类
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/tags/" id="tags">
+                  <i class="fas fa-tags fa-fw"></i>标签
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/archives/" id="archives">
+                  <i class="fas fa-archive fa-fw"></i>时间轴
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box">
+                  <i class="fas fa-ellipsis-v fa-fw"></i>更多
+                </a>
+                
+                  <ul class="list-v">
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/about/" id="about">
+                  <i class="fas fa-info-circle fa-fw"></i>关于小站
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="https://github.com/bubblewu/hexo-blog" target="_blank" id="https:githubcombubblewuhexo-blog" rel="external nofollow noopener noreferrer">
+                  <i class="fab fa-github fa-fw"></i>博客源码
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/contributors/" id="contributors">
+                  <i class="fas fa-handshake fa-fw"></i>鸣谢
+                </a>
+                
+              </li>
+            
+          
+                    
+                  </ul>
+                
+              </li>
+            
+          
+          
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="Search...">
+        </form>
+      </div>
+
+			<ul class="switcher nav-list-h">
+				
+					<li><a class="s-search fas fa-search fa-fw" target="_self" href="javascript:void(0)"></a></li>
+				
+				<li>
+          <a class="s-menu fas fa-bars fa-fw" target="_self" href="javascript:void(0)"></a>
+          <ul class="menu-phone list-v navigation white-box">
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/" id="home">
+                  <i class="fas fa-home fa-fw fa-fw"></i>主页
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/categories/" id="categories">
+                  <i class="fas fa-folder-open fa-fw"></i>分类
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/tags/" id="tags">
+                  <i class="fas fa-tags fa-fw"></i>标签
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/archives/" id="archives">
+                  <i class="fas fa-archive fa-fw"></i>时间轴
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box">
+                  <i class="fas fa-ellipsis-v fa-fw"></i>更多
+                </a>
+                
+                  <ul class="list-v">
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/about/" id="about">
+                  <i class="fas fa-info-circle fa-fw"></i>关于小站
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="https://github.com/bubblewu/hexo-blog" target="_blank" id="https:githubcombubblewuhexo-blog" rel="external nofollow noopener noreferrer">
+                  <i class="fab fa-github fa-fw"></i>博客源码
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/contributors/" id="contributors">
+                  <i class="fas fa-handshake fa-fw"></i>鸣谢
+                </a>
+                
+              </li>
+            
+          
+                    
+                  </ul>
+                
+              </li>
+            
+          
+            
+          </ul>
+        </li>
+			</ul>
+		</div>
+	</div>
+  </div>
+</header>
+
+<script>setLoadingBarProgress(40);</script>
+
+
+
+  <div class="l_body nocover">
+    <div class="body-wrapper">
+      
+
+<div class="l_main">
+  
+
+  
+    <article id="post" class="post white-box reveal shadow article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class="meta">
+    
+      
+      
+      <div class="meta" id="header-meta">
+        
+          
+  <h1 class="title">
+    <a href="/ckbesij6t000029s67j9p5x9z/">
+      String类的intern()方法
+    </a>
+  </h1>
+
+
+        
+        <div class="new-meta-box">
+          
+            
+          
+            
+              
+<div class="new-meta-item author">
+  <a href="https://bubblewu.github.io/" rel="nofollow">
+    <img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/bubble.png">
+    <p>大泡泡</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+  
+  <div class="new-meta-item category">
+    <a href="/categories/Java/" rel="nofollow">
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
+      <p>Java</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              <div class="new-meta-item date">
+  <a class="notlink">
+    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+    <p>发布于：2020年6月14日</p>
+  </a>
+</div>
+
+            
+          
+            
+              <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-06-14T16:11:27+08:00">
+  <a class="notlink">
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：2020年6月14日</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+
+            
+          
+            
+              
+  <div class="new-meta-item wordcount">
+    <a class="notlink">
+      <i class="fas fa-keyboard fa-fw" aria-hidden="true"></i>
+      <p>字数：1.1k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class="notlink">
+      <i class="fas fa-hourglass-half fa-fw" aria-hidden="true"></i>
+      <p>时长：4分钟</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class="notlink">
+        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv"></span>
+        </p>
+      </a>
+    </div>
+  
+
+
+            
+          
+        </div>
+        
+          <hr>
+        
+      </div>
+    
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <h1 id="String-intern-方法"><a href="#String-intern-方法" class="headerlink" title="String::intern()方法"></a>String::intern()方法</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><code>String::intern()</code>是一个Native方法，用于返回该对象在常量池中的引用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> String <span class="title">intern</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p>作用：如果字符串常量池中已经包含一个等于该String对象的字符串，则返回代表池中这个字符串的String对象的引用；否则，会将此String对象包含的字符串添加到常量池中，并且返回此String对象的引用。</p>
+<a id="more"></a>
+
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><ul>
+<li>示例1：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * - 在JDK 6中运行，会得到三个false；</span></span><br><span class="line"><span class="comment"> * 在JDK 6中，intern()方法会把首次遇到的字符串实例复制到永久代（方法区）的字符串常量池中存储，</span></span><br><span class="line"><span class="comment"> * 返回的也是永久代里面这个字符串实例的引用，而由StringBuilder创建的字符串对象实例在Java堆上，</span></span><br><span class="line"><span class="comment"> * 所以必然不可能是同一个引用，结果将返回false。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * - 而在JDK 7后中运行，会得到一个true、一个false和一个true；</span></span><br><span class="line"><span class="comment"> * 因为JDK7中，intern()方法实现就不需要再拷贝字符串的实例到永久代了，既然字符串常量池已经移到Java堆中，</span></span><br><span class="line"><span class="comment"> * 那只需要在常量池里记录一下首次出现的实例引用即可。</span></span><br><span class="line"><span class="comment"> * 因此intern()返回的引用和由StringBuilder创建的那个字符串实例就是同一个。</span></span><br><span class="line"><span class="comment"> * 而对str2比较返回false，这是因为java这个字符串在执行StringBuilder()之前就已经出现过了，(在加载sun.misc.Version这个类的时候进入常量池的)</span></span><br><span class="line"><span class="comment"> * 字符串常量池中已经有它的引用，不符合intern()方法要求“首次遇到”的原则，“JVM调优”这个字符串则是首次出现的，因此结果返回true。</span></span><br><span class="line"><span class="comment"> * 而str3和str1一样，"JDKJVM"这个字符串则是首次出现。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">compare</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    String str1 = <span class="keyword">new</span> StringBuilder().append(<span class="string">"JVM"</span>).append(<span class="string">"调优"</span>).toString();</span><br><span class="line">    System.out.println(str1.intern() == str1);</span><br><span class="line">    <span class="comment">// java这个字符串在执行StringBuilder()之前就已经出现过了，在加载sun.misc.Version这个类的时候进入常量池的。</span></span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * 参考：https://www.zhihu.com/question/51102308/answer/124441115</span></span><br><span class="line"><span class="comment">     * sun.misc.Version类会在JDK类库的初始化过程中被加载并初始化，</span></span><br><span class="line"><span class="comment">     * 而在初始化时它需要对静态常量字段根据指定的常量值（ConstantValue）做默认初始化，</span></span><br><span class="line"><span class="comment">     * 此时被 sun.misc.Version.launcher 静态常量字段所引用的"java"字符串字面量就被intern到HotSpot VM的字符串常量池StringTable里了。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    String str2 = <span class="keyword">new</span> StringBuilder().append(<span class="string">"ja"</span>).append(<span class="string">"va"</span>).toString();</span><br><span class="line">    System.out.println(str2.intern() == str2);</span><br><span class="line">    <span class="comment">// 而JDKJVM这个字符串则是首次出现</span></span><br><span class="line">    String str3 = <span class="keyword">new</span> StringBuilder().append(<span class="string">"JDK"</span>).append(<span class="string">"JVM"</span>).toString();</span><br><span class="line">    System.out.println(str3.intern() == str3);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * java中的String是引用类型。创建的String对象，实际上存储的是一个地址。</span></span><br><span class="line"><span class="comment"> * 所以下面a和b都是引用类型，其存储的是字符串的地址。它们本身存储在Java虚拟机栈的局部变量表中。</span></span><br><span class="line"><span class="comment"> * - a：直接将字符串存储在常量池中，然后将a指向常量池种中的"JVM"。</span></span><br><span class="line"><span class="comment"> * - b：先将字符串"JVM"存储在常量池中，然后在heap中创建一个对象，该对象指向常量池中的"JVM"，最后将b指向heap中创建的这个对象。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 也就是说，a和b存储的内容是一样的，都是"JVM"，但地址不一样：a中保存的是常量池中"JVM"的地址，b保存的是heap中那个对象的地址，</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 双等于号"=="比较的是地址，equals()比较的是内容。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">compareStr</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    String a = <span class="string">"JVM"</span>;</span><br><span class="line">    <span class="comment">// new一个对象</span></span><br><span class="line">    String b = <span class="keyword">new</span> String(<span class="string">"JVM"</span>);</span><br><span class="line">    <span class="comment">// == 比较地址是否相等</span></span><br><span class="line">    <span class="comment">// 都在运行时常量池中</span></span><br><span class="line">    System.out.println(<span class="string">"JVM"</span> == a); <span class="comment">// true</span></span><br><span class="line">    System.out.println(a.intern() == a); <span class="comment">// true</span></span><br><span class="line">    <span class="comment">// a为字符字面量（存储在运行时常量池中），b为对象（存储在堆中），所以不等。</span></span><br><span class="line">    System.out.println(a == b); <span class="comment">// false</span></span><br><span class="line">    System.out.println(a.intern() == b); <span class="comment">// false</span></span><br><span class="line"></span><br><span class="line">    System.out.println(a.equals(b));  <span class="comment">// true</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>示例2：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         双等号"=="比较的是地址；equals()比较的是内容。</span></span><br><span class="line"><span class="comment">        */</span></span><br><span class="line">        String s1 = <span class="string">"abc"</span>;</span><br><span class="line">        String s2 = <span class="string">"abc"</span>;</span><br><span class="line">        System.out.println(s1 == s2); <span class="comment">// true</span></span><br><span class="line">        System.out.println(s1.equals(s2)); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">        String s3 = <span class="keyword">new</span> String(<span class="string">"abc"</span>);</span><br><span class="line">        System.out.println(s1 == s3); <span class="comment">// false</span></span><br><span class="line">        System.out.println(s1.equals(s3)); <span class="comment">// true</span></span><br><span class="line">        System.out.println(s1 == s3.intern()); <span class="comment">// true</span></span><br><span class="line"></span><br><span class="line">        String s4 = <span class="keyword">new</span> String(<span class="string">"abc"</span>);</span><br><span class="line">        System.out.println(s3 == s4);  <span class="comment">// false</span></span><br><span class="line">        System.out.println(s3.intern() == s4.intern());  <span class="comment">// true</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+          
+            <div class="article_footer">
+              
+                
+  
+    
+    
+
+
+
+  
+
+  
+    
+    
+
+
+
+  
+
+  
+    
+    
+
+<section class="widget qrcode  desktop mobile">
+  
+
+  <div class="content article-entry">
+    
+      
+        <div class="fancybox"><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/pay.jpeg" height="300px"></div>
+      
+    
+  </div>
+</section>
+
+  
+
+
+              
+            </div>
+          
+        </div>
+        
+          
+
+
+  <section class="meta" id="footer-meta">
+    <div class="new-meta-box">
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-06-14T16:11:27+08:00">
+  <a class="notlink">
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：2020年6月14日</p>
+  </a>
+</div>
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item category">
+    <a href="/categories/Java/" rel="nofollow">
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
+      <p>Java</p>
+    </a>
+  </div>
+
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/Java/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>Java</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title rel="external nofollow noopener noreferrer" href="http://connect.qq.com/widget/shareqq/index.html?url=https://bubblewu.github.io/ckbesij6t000029s67j9p5x9z/&title=String类的intern()方法 - 大泡泡的笔记&summary=String::intern()方法概述String::intern()是一个Native方法，用于返回该对象在常量池中的引用。
+1public native String intern();
+作用：如果字符串常量池中已经包含一个等于该String对象的字符串，则返回代表池中这个字符串的String对象的引用；否则，会将此String对象包含的字符串添加到常量池中，并且返回此String对象的引用。" target="_blank">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title rel="external nofollow noopener noreferrer" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://bubblewu.github.io/ckbesij6t000029s67j9p5x9z/&title=String类的intern()方法 - 大泡泡的笔记&summary=String::intern()方法概述String::intern()是一个Native方法，用于返回该对象在常量池中的引用。
+1public native String intern();
+作用：如果字符串常量池中已经包含一个等于该String对象的字符串，则返回代表池中这个字符串的String对象的引用；否则，会将此String对象包含的字符串添加到常量池中，并且返回此String对象的引用。" target="_blank">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title rel="external nofollow noopener noreferrer" href="http://service.weibo.com/share/share.php?url=https://bubblewu.github.io/ckbesij6t000029s67j9p5x9z/&title=String类的intern()方法 - 大泡泡的笔记&summary=String::intern()方法概述String::intern()是一个Native方法，用于返回该对象在常量池中的引用。
+1public native String intern();
+作用：如果字符串常量池中已经包含一个等于该String对象的字符串，则返回代表池中这个字符串的String对象的引用；否则，会将此String对象包含的字符串添加到常量池中，并且返回此String对象的引用。" target="_blank">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        
+        <div class="hoverbox">
+          <a><img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/wechat.png"></a>
+          <div class="target">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATgAAAE4CAAAAADqFLC2AAADpElEQVR42u3aQXLjMAwEQP//07v33XKJA0AynDRvSRyJbF6mBn79sUrrhQAcOHDgLHDglsC9iuu/B/7z+/T/3n0u/fny4M3zggMHDhw4cODAbYNLX3y1oamDpPtMLzg9Lzhw4MCBAwcO3Fa4aiBNP3f1f1XQ6aAODhw4cODAgQP3W+GqwbV68NPPgwMHDhw4cODAgTsD6hacKQg4cODAgQMHDtxvg4sHtEOD4vSgU8Xnxyb54MCBAwcOHDhwQ3Dp6h700z+XzwsOHDhw4MCBA7cErrumBtHd904//+3zwIEDBw4cOHDglsB1i8GrDaaF4uum1T0fOHDgwIEDBw7cNrjTjVcHzqcbnw7i1Yu7fB44cODAgQMHDtwSuDgAhgHztOA8/f10AI7PBw4cOHDgwIEDtwxuKghfHbj7ueoFVwfW4MCBAwcOHDhw2+HSoDkF2H3u0wNqcODAgQMHDhy4LXDdQrE6EK4WlmkgfnySDw4cOHDgwIED9xBcdcPVoJwepDvI7hajxw0wOHDgwIEDBw7cw3DlQi/8e3fgPHVB7QIVHDhw4MCBAwduCVxaXFaLwe7GT4vHbvCNJ/ngwIEDBw4cOHAfgrvrIOlAuzr4rg7Ky/DgwIEDBw4cOHBL4E4LyOpAOi06U9husZoWpeDAgQMHDhw4cFvhqgH2NEB3D5DuY/oCwYEDBw4cOHDgtsB1g+VUML4L6gooLT7BgQMHDhw4cOC2wJ2+6BS2Cl997tTg/HhgDg4cOHDgwIEDtwQuXdUA2Q3SxwG1GZzjIhMcOHDgwIEDB+5L4LpF5V0BNr2oasAGBw4cOHDgwIH7Frj0hVNBuQqQBvB0n+DAgQMHDhw4cFvgqgPjNAhPDajTv1cv6O17wIEDBw4cOHDglsF1C8GpIrI64E7ByoNtcODAgQMHDhy4L4GrHvh4Iw9/MbEdqMGBAwcOHDhw4JbDpQVlWnhWi830i4LdohUcOHDgwIEDB24r3FTwnSoOqwVq9YLTghYcOHDgwIEDB24L3Ku4pqGnvjg49fPxQBocOHDgwIEDB+7DcNXBczd4poG3C9MuRsGBAwcOHDhw4JbCTReIU4H6rvfG0ODAgQMHDhw4cD8Urhqkp4rINJi3B9LgwIEDBw4cOHBfDtc9WPUiHr9IcODAgQMHDhy4pXDVF6Qg1eCaglb3Cw4cOHDgwIED9y1wUwPcuwbFXdju/sGBAwcOHDhw4LbBWdkCBw4cOHAWOHAfXn8BUC9/poLk9E4AAAAASUVORK5CYII=">
+          </div>
+        </div>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+          <div class="prev-next">
+            
+            
+              <a class="next" href="/ckbarwdyc0000z5yd8tl0cjqn/">
+                <p class="title">基于Neo4j的时光网电影数据可视化【附源码】<i class="fas fa-chevron-right" aria-hidden="true"></i></p>
+                <p class="content">基于Neo4j的电影数据可视化本文主要内容为：
+
+基于requests + BeautifulSoup抓取时光网电影数据；
+基于电影数据构建电影和关系实体信息；
+数据导入neo4j进行存储分析；...</p>
+              </a>
+            
+          </div>
+        
+      </section>
+    </article>
+  
+
+  
+    
+  
+    
+    
+  
+
+  <section class="widget related_posts shadow desktop mobile">
+    
+  <header>
+    
+      <i class="fas fa-bookmark fa-fw" aria-hidden="true"></i><span class="name">相关文章</span>
+    
+  </header>
+
+
+    <div class="content">
+      <ul class="popular-posts"><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckbarvw0y000fyayd2z9y58tz/" title="生产者-消费者案例" rel="bookmark">生产者-消费者案例</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckbarvw2z0045yayd50uf5v6u/" title="001 运行时数据区域和OutOfMemoryError异常" rel="bookmark">001 运行时数据区域和OutOfMemoryError异常</a></h3></div></li></ul>
+    </div>
+  </section>
+
+
+  
+
+
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box reveal comments shadow">
+    <section class="article typo">
+      <p ct><i class="fas fa-comments"></i> 评论</p>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="gitalk-container"></div>
+        </section>
+      
+      
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: 'String类的intern()方法',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class="l_side">
+  
+  
+    
+    
+
+<section class="widget blogger shadow desktop mobile">
+  <div class="content">
+    
+      
+        <a class="avatar flat-box" href="/about/">
+          <img no-lazy src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/bubble.png">
+        </a>
+      
+    
+    
+      <div class="text">
+        
+        
+        
+          <p><span id="jinrishici-sentence">大泡泡的笔记</span></p>
+          <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+        
+      </div>
+    
+    
+      <div class="social-wrapper">
+        
+          
+            <a href="mailto:752820344@qq.com" class="social fas fa-envelope flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://github.com/bubblewu" class="social fab fa-github flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+      </div>
+    
+  </div>
+</section>
+
+  
+
+  
+    
+    
+
+
+  <section class="widget toc-wrapper shadow desktop mobile">
+    
+  <header>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class="name">本文目录</span>
+    
+  </header>
+
+
+    <div class="content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#概述"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#案例"><span class="toc-number">2.</span> <span class="toc-text">案例</span></a></li></ol>
+    </div>
+  </section>
+
+
+  
+
+
+</aside>
+
+
+  
+  <footer class="clearfix">
+    <br><br>
+    
+      
+        <br>
+        <div class="social-wrapper">
+          
+            
+              <a href="mailto:752820344@qq.com" class="social fas fa-envelope flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+              </a>
+            
+          
+            
+              <a href="https://github.com/bubblewu" class="social fab fa-github flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+              </a>
+            
+          
+        </div>
+      
+    
+      
+        本站使用
+        <a href="https://volantis.js.org/" target="_blank" class="codename">Bubble</a>
+        作为主题，总访问量为
+          <span id="busuanzi_value_site_pv"><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span>
+          次
+        
+      
+    
+      
+        <div class="copyright">
+        <p><a href="https://bubblewu.github.io/">Copyright © 2020-2222 Bubble</a></p>
+
+        </div>
+      
+    
+  </footer>
+
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href="javascript:void(0)"></a>
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4/dist/jquery.min.js"></script>
+
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2/js/instant_page.js" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.6/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      ScrollReveal().reveal('.l_main .reveal', {
+        distance: '8px',
+        duration: '800',
+        interval: '100',
+        scale: '1'
+      });
+    });
+  </script>
+
+
+  
+<script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+  
+  
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js"></script>
+
+    <script type="text/javascript">
+      $(function(){
+        var imgs=["https://img.vim-cn.com/6d/a0c9e6f9efad8b731cb7376504bd10d79d2053.jpg", "https://cdn.jsdelivr.net/gh/xaoxuu/cdn-wallpaper/abstract/41F215B9-261F-48B4-80B5-4E86E165259E.jpeg"];
+        if ('false' == 'true') {
+          function shuffle(arr){
+            /*From countercurrent-time*/
+            var n = arr.length;
+            while(n--) {
+              var index = Math.floor(Math.random() * n);
+              var temp = arr[index];
+              arr[index] = arr[n];
+              arr[n] = temp;
+            }
+          }
+          shuffle(imgs);
+        }
+        if ('') {
+          $('').backstretch(
+            imgs,
+          {
+            duration: "20000",
+            fade: "1500"
+          });
+        } else {
+          $.backstretch(
+            imgs,
+          {
+            duration: "20000",
+            fade: "1500"
+          });
+        }
+      });
+    </script>
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: "9c3ba30f68564e88ff5a",
+      clientSecret: "96fdc1643060dc0b177fa05627e83eaba08781d8",
+      repo: "hexo-blog",
+      owner: "bubblewu",
+      admin: "bubblewu",
+      
+        id: location.pathname,      // Ensure uniqueness and length less than 50
+      
+      distractionFreeMode: false  // Facebook-like distraction free mode
+    });
+    gitalk.render('gitalk-container');
+  </script>
+
+
+
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2.6.5/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2.6.5/js/search.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2/js/comment_typing.js"></script>
+
+
+
+
+
+
+<!-- 复制 -->
+
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="fas fa-copy"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('fa-copy');
+        $icon.addClass('fa-check-circle');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('fa-check-circle');
+          $icon.addClass('fa-copy');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('fa-copy');
+        $icon.addClass('fa-times-circle');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('fa-times-circle');
+          $icon.addClass('fa-copy');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+
+
+<!-- fancybox -->
+
+  <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("div.fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>
