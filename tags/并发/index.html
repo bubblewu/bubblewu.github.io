@@ -5,6 +5,8 @@
   <!-- SEO相关 -->
   
     
+      <meta name="robots" content="noindex,follow">
+    
   
   <!-- 渲染优化 -->
   <meta name="renderer" content="webkit">
@@ -16,12 +18,8 @@
 
   <!-- 页面元数据 -->
   
-    <title>Bubble Sort - 大泡泡的笔记</title>
+    <title>标签：并发 - 大泡泡的笔记</title>
   
-    <meta name="keywords" content="面试">
-  
-  
-    <meta name="description" content="经典面试题---进阶版冒泡排序">
   
 
   <!-- feed -->
@@ -337,12 +335,25 @@
     <div class="body-wrapper">
       
 
+
 <div class="l_main">
   
-
-  
-    <article id="post" class="post white-box reveal shadow article-type-post" itemscope itemprop="blogPost">
+    
       
+  <section class="post-list ">
+    
+      
+        
+          
+        
+      
+    
+    
+      
+        
+          <div class="post-wrapper">
+            <article class="post white-box shadow reveal ">
+  
 
 
   <section class="meta">
@@ -352,11 +363,11 @@
       <div class="meta" id="header-meta">
         
           
-  <h1 class="title">
-    <a href="/ckbarvw1m001ryayd2tq6599d/">
-      Bubble Sort
+  <h2 class="title">
+    <a href="/ckd70wo7j0017qlydgj2w1nq3/">
+      并发：多线程程序的评价标准
     </a>
-  </h1>
+  </h2>
 
 
         
@@ -379,9 +390,9 @@
               
   
   <div class="new-meta-item category">
-    <a href="/categories/Python/" rel="nofollow">
+    <a href="/categories/Java/%E5%B9%B6%E5%8F%91/" rel="nofollow">
       <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
-      <p>Python</p>
+      <p>Java/并发</p>
     </a>
   </div>
 
@@ -392,24 +403,9 @@
               <div class="new-meta-item date">
   <a class="notlink">
     <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
-    <p>发布于：2020年5月11日</p>
+    <p>发布于：2020年7月29日</p>
   </a>
 </div>
-
-            
-          
-            
-              <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-06-14T16:23:06+08:00">
-  <a class="notlink">
-    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
-    <p>更新于：2020年6月14日</p>
-  </a>
-</div>
-
-            
-          
-            
-              
 
             
           
@@ -418,13 +414,13 @@
   <div class="new-meta-item wordcount">
     <a class="notlink">
       <i class="fas fa-keyboard fa-fw" aria-hidden="true"></i>
-      <p>字数：336字</p>
+      <p>字数：749字</p>
     </a>
   </div>
   <div class="new-meta-item readtime">
     <a class="notlink">
       <i class="fas fa-hourglass-half fa-fw" aria-hidden="true"></i>
-      <p>时长：1分钟</p>
+      <p>时长：2分钟</p>
     </a>
   </div>
 
@@ -433,17 +429,6 @@
           
             
               
-  
-    <div class="new-meta-item browse busuanzi">
-      <a class="notlink">
-        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
-        <p>
-          <span id="busuanzi_value_page_pv"></span>
-        </p>
-      </a>
-    </div>
-  
-
 
             
           
@@ -456,237 +441,80 @@
   </section>
 
 
-      <section class="article typo">
-        <div class="article-entry" itemprop="articleBody">
-          
-          <p>经典面试题---进阶版冒泡排序</p>
-<a id="more"></a>
-
-<h2 id="常规版"><a href="#常规版" class="headerlink" title="常规版"></a>常规版</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(data)</span>:</span></span><br><span class="line">    <span class="string">"""常规版"""</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(data)):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(len(data)-i<span class="number">-1</span>):</span><br><span class="line">            <span class="keyword">if</span> data[j] &gt; data[j+<span class="number">1</span>]:</span><br><span class="line">                data[j], data[j + <span class="number">1</span>] = data[j + <span class="number">1</span>], data[j]</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    data = [<span class="number">3</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">7</span>]</span><br><span class="line">    print(data)</span><br><span class="line">    print(foo(data))</span><br></pre></td></tr></table></figure>
-
-<h2 id="进阶版"><a href="#进阶版" class="headerlink" title="进阶版"></a>进阶版</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bubble_sort</span><span class="params">(data)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    进阶版</span></span><br><span class="line"><span class="string">    最坏情况 时间复杂度 O(n**2)</span></span><br><span class="line"><span class="string">    最好情况 时间复杂度 O(n)</span></span><br><span class="line"><span class="string">    稳定排序法</span></span><br><span class="line"><span class="string">    空间复杂度最佳 只需要一个额外空间</span></span><br><span class="line"><span class="string">    适用于数据量小或有部分数据已经排过序的情况</span></span><br><span class="line"><span class="string">    :param data:</span></span><br><span class="line"><span class="string">    :return:</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># i 倒序循环列表排序</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(data)<span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>):</span><br><span class="line">        flag = <span class="literal">False</span>  <span class="comment"># flag判断是否执行了交换操作</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i):  <span class="comment"># i 为倒序循环，所以j的最大值即是i 0～i</span></span><br><span class="line">            <span class="keyword">if</span> data[j] &gt; data[j + <span class="number">1</span>]:</span><br><span class="line">                data[j], data[j + <span class="number">1</span>] = data[j + <span class="number">1</span>], data[j]</span><br><span class="line">                flag = <span class="literal">True</span>  <span class="comment"># 执行过交换操作，把flag置为True</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> flag:  <span class="comment"># 执行完一次扫描后，判断是否执行过交换操作，如果没有交换过数据，就表示此时数组已完成排序，故直接跳出循环</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        print(<span class="string">'第&#123;0&#125;次排序: &#123;1&#125;'</span>.format(len(data)-i, data))</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    data = [<span class="number">3</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">7</span>]</span><br><span class="line">    print(data)</span><br><span class="line">    print(bubble_sort(data))</span><br></pre></td></tr></table></figure>
-
-          
-            <div class="article_footer">
-              
-                
-  
-    
-    
-
-
-
-  
-
-  
-    
-    
-
-
-
-  
-
-  
-    
-    
-
-<section class="widget qrcode  desktop mobile">
-  
-
-  <div class="content article-entry">
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>针对多线程程序，我们不能单纯的来指出是好还是坏，需要遵循一定的评价标准来规范的指出好在哪里、差在哪里？</p>
+<p>其实也就是：</p>
+<ul>
+<li>安全性和生存性：程序的必要条件；</li>
+<li>可复用性和性能：提高程序质量条件；</li>
+</ul>
+      
+    </div>
     
       
-        <div class="fancybox"><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/pay.jpeg" height="300px"></div>
+        <div class="button readmore">
+          <a href="/ckd70wo7j0017qlydgj2w1nq3/">
+            阅读全文 <i class="fas fa-chevron-right"></i>
+          </a>
+        </div>
       
     
+  </section>
+</article>
+
+          </div>
+        
+      
+    
+  </section>
+  
+    
+    <!-- 根据主题中的设置决定是否在archive中针对摘要部分的MathJax公式加载mathjax.js文件 -->
+    
+    
+
+  
+
+
+    
+  
+</div>
+<aside class="l_side">
+  
+  
+    
+    
+
+<section class="widget list shadow desktop mobile">
+  
+  <header>
+    
+      <i class="fas fa-bullhorn fa-fw fa-fw" aria-hidden="true"></i><span class="name">本站公告</span>
+    
+  </header>
+
+
+  <div class="content">
+    <ul class="list entry navigation">
+      
+        <li><a class="flat-box" title="https://github.com/bubblewu" href="https://github.com/bubblewu" id="https:githubcombubblewu" rel="external nofollow noopener noreferrer" target="_blank">
+          <div class="name">
+            
+              <i class="fab fa-github fa-fw" aria-hidden="true"></i>
+            
+            博主: 大泡泡
+          </div>
+          
+        </a></li>
+      
+    </ul>
   </div>
 </section>
 
   
 
-
-              
-            </div>
-          
-        </div>
-        
-          
-
-
-  <section class="meta" id="footer-meta">
-    <div class="new-meta-box">
-      
-        
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-06-14T16:23:06+08:00">
-  <a class="notlink">
-    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
-    <p>更新于：2020年6月14日</p>
-  </a>
-</div>
-
-        
-      
-        
-          
-  
-  <div class="new-meta-item category">
-    <a href="/categories/Python/" rel="nofollow">
-      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
-      <p>Python</p>
-    </a>
-  </div>
-
-
-        
-      
-        
-          
-  
-  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/%E9%9D%A2%E8%AF%95/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>面试</p></a></div>
-
-
-        
-      
-        
-          
-  <div class="new-meta-item share -mob-share-list">
-  <div class="-mob-share-list share-body">
-    
-      
-        <a class="-mob-share-qq" title rel="external nofollow noopener noreferrer" href="http://connect.qq.com/widget/shareqq/index.html?url=https://bubblewu.github.io/ckbarvw1m001ryayd2tq6599d/&title=Bubble Sort - 大泡泡的笔记&summary=经典面试题---进阶版冒泡排序" target="_blank">
-          
-            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qq.png">
-          
-        </a>
-      
-    
-      
-        <a class="-mob-share-qzone" title rel="external nofollow noopener noreferrer" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://bubblewu.github.io/ckbarvw1m001ryayd2tq6599d/&title=Bubble Sort - 大泡泡的笔记&summary=经典面试题---进阶版冒泡排序" target="_blank">
-          
-            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qzone.png">
-          
-        </a>
-      
-    
-      
-        <a class="-mob-share-weibo" title rel="external nofollow noopener noreferrer" href="http://service.weibo.com/share/share.php?url=https://bubblewu.github.io/ckbarvw1m001ryayd2tq6599d/&title=Bubble Sort - 大泡泡的笔记&summary=经典面试题---进阶版冒泡排序" target="_blank">
-          
-            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/weibo.png">
-          
-        </a>
-      
-    
-      
-        
-        <div class="hoverbox">
-          <a><img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/wechat.png"></a>
-          <div class="target">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATgAAAE4CAAAAADqFLC2AAADnklEQVR42u3aQZLbMAwEQP//08k9VS4RA8iCneZNXkkkm3uYAvT6Y0TjhQAcOHDgDHDglsC9wnE80T/3X73n3f2n16frSfcLDhw4cODAgQO3DS6FqC6wCtydN13/23WAAwcOHDhw4MAthbsMgIfXU8E5XU81YB+/Hxw4cODAgQMH7sfhrgJnCn5XYRQcOHDgwIEDBw7cWcHydMMpCDhw4MCBAwcO3P8GV27QFjc+BX8anNPGNjhw4MCBAwcO3LfAVcdUYfOp63i/4MCBAwcOHDhwS+C64xT2tICZFjJPA2x7v+DAgQMHDhw4cEvguoXBqQLldGBND/LyQMGBAwcOHDhw4JbAVQNtt2B4GnDTIJ7+ftxoBwcOHDhw4MCBWwqXTlj9vRqApxvoacEVHDhw4MCBAwduG1waSO+GrAbz6n7KBwkOHDhw4MCBA7cUrrrRtIA5VYicCsTH6wcHDhw4cODAgVsCV50oDZJThcm0cd4tqIIDBw4cOHDgwG2FqwbYdOHpAX0qIB8XMsGBAwcOHDhw4B6GSxu/3cLnpw+s29gGBw4cOHDgwIHbCldd+Cnk9IeFUwceHyA4cODAgQMHDtwyuO6Cq+/rBuj0urtvcODAgQMHDhy4rXDjDdyh96QN6OrfLw8SHDhw4MCBAwduOdxdwbTaCO5uuPp8u5MPDhw4cODAgQP3IbhqoKxuuBuwu1Ddf4C3hUxw4MCBAwcOHLiH4bqN5RSsenDpesfvAwcOHDhw4MCBWwYXF/aGCoRpgTQ9oDgwgwMHDhw4cODALYHrfqjXhbhrpDDgwIEDBw4cOHDfCtdtJFefqwbs9IPFsQ8NwYEDBw4cOHDgvgQuLQxWA2q3YfyxxjU4cODAgQMHDtxyuPT3NFh2A3kVMm5sgwMHDhw4cODALYdLg+dpYXGqkNp9X/k5cODAgQMHDhy45XBp0E0LkO1gGq67/MEhOHDgwIEDBw7cErjuOC1QTh1UNXh3DwIcOHDgwIEDB24r3CscXaCpIF0tSKYHAA4cOHDgwIEDtxWuG2C7wTktME411I/nAwcOHDhw4MCBWwo3VUA8Da53B+q0If32Ghw4cODAgQMH7sfgphrFUwE3hSo3pMGBAwcOHDhw4H4E7q4CYvdDxdP3PBaAwYEDBw4cOHDgmnDVhU7DVAuP1fmr94EDBw4cOHDgwG2Hm27gTjWQp2DHGuzgwIEDBw4cOHBL4IzaAAcOHDhwBjhwD4+/JbMBFwq8i8kAAAAASUVORK5CYII=">
-          </div>
-        </div>
-      
-    
-  </div>
-</div>
-
-
-
-        
-      
-    </div>
-  </section>
-
-
-        
-        
-          <div class="prev-next">
-            
-              <a class="prev" href="/ckbarvw0y000fyayd2z9y58tz/">
-                <p class="title"><i class="fas fa-chevron-left" aria-hidden="true"></i>生产者-消费者案例</p>
-                <p class="content">基于Java的生产者-消费者模式代码实现，可以此为Demo来用于具体的实际业务。
-
-
-
-
-生产者-消费者demo12345678910111213141516171819202122232425...</p>
-              </a>
-            
-            
-          </div>
-        
-      </section>
-    </article>
-  
-
-  
-    
-  
-    
-    
-  
-
-  <section class="widget related_posts shadow desktop mobile">
-    
-  <header>
-    
-      <i class="fas fa-bookmark fa-fw" aria-hidden="true"></i><span class="name">相关文章</span>
-    
-  </header>
-
-
-    <div class="content">
-      <ul class="popular-posts"><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckbarwdyc0000z5yd8tl0cjqn/" title="基于Neo4j的时光网电影数据可视化【附源码】" rel="bookmark">基于Neo4j的时光网电影数据可视化【附源码】</a></h3></div></li></ul>
-    </div>
-  </section>
-
-
-  
-
-
-  
-
-  
-    <!-- 显示推荐文章和评论 -->
-
-
-
-  <article class="post white-box reveal comments shadow">
-    <section class="article typo">
-      <p ct><i class="fas fa-comments"></i> 评论</p>
-      
-      
-      
-      
-        <section id="comments">
-          <div id="gitalk-container"></div>
-        </section>
-      
-      
-      
-    </section>
-  </article>
-
-
-  
-
-
-
-
-<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
-
-
-
-  <script>
-    window.subData = {
-      title: 'Bubble Sort',
-      tools: true
-    }
-  </script>
-
-
-</div>
-<aside class="l_side">
-  
   
     
     
@@ -733,22 +561,82 @@
   
     
     
+  
 
-
-  <section class="widget toc-wrapper shadow desktop mobile">
+  <section class="widget category shadow desktop">
     
   <header>
     
-      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class="name">本文目录</span>
+      <a href="/blog/categories/"><i class="fas fa-folder-open fa-fw" aria-hidden="true"></i><span class="name">文章分类</span></a>
     
   </header>
 
 
     <div class="content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#常规版"><span class="toc-number">1.</span> <span class="toc-text">常规版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进阶版"><span class="toc-number">2.</span> <span class="toc-text">进阶版</span></a></li></ol>
+      <ul class="entry navigation">
+        
+          <li><a class="flat-box" title="/categories/Java/" href="/categories/Java/" id="categoriesJava"><div class="name">Java</div><div class="badge">(6)</div></a></li>
+        
+          <li><a class="flat-box child" title="/categories/Java/JVM/" href="/categories/Java/JVM/" id="categoriesJavaJVM"><div class="name">JVM</div><div class="badge">(2)</div></a></li>
+        
+          <li><a class="flat-box child" title="/categories/Java/Tool/" href="/categories/Java/Tool/" id="categoriesJavaTool"><div class="name">Tool</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box child" title="/categories/Java/%E5%B9%B6%E5%8F%91/" href="/categories/Java/%E5%B9%B6%E5%8F%91/" id="categoriesJavaE5B9B6E58F91"><div class="name">并发</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/Neo4j/" href="/categories/Neo4j/" id="categoriesNeo4j"><div class="name">Neo4j</div><div class="badge">(1)</div></a></li>
+        
+          <li><a class="flat-box" title="/categories/Python/" href="/categories/Python/" id="categoriesPython"><div class="name">Python</div><div class="badge">(2)</div></a></li>
+        
+      </ul>
     </div>
   </section>
 
+
+  
+
+  
+    
+    
+  
+
+  <section class="widget tagcloud shadow desktop mobile">
+    
+  <header>
+    
+      <a href="/blog/tags/"><i class="fas fa-tags fa-fw" aria-hidden="true"></i><span class="name">热门标签</span></a>
+    
+  </header>
+
+
+    <div class="content">
+      <a href="/tags/JVM/" style="font-size: 19px; color: #777">JVM</a> <a href="/tags/Java/" style="font-size: 24px; color: #555">Java</a> <a href="/tags/Neo4j/" style="font-size: 14px; color: #999">Neo4j</a> <a href="/tags/Python/" style="font-size: 14px; color: #999">Python</a> <a href="/tags/Tool/" style="font-size: 14px; color: #999">Tool</a> <a href="/tags/%E5%B9%B6%E5%8F%91/" style="font-size: 14px; color: #999">并发</a> <a href="/tags/%E9%9D%A2%E8%AF%95/" style="font-size: 14px; color: #999">面试</a>
+    </div>
+  </section>
+
+
+  
+
+  
+    
+    
+
+<section class="widget qrcode shadow desktop">
+  
+  <header>
+    
+      <i class="fas fa-mobile fa-fw" aria-hidden="true"></i><span class="name">手机观看</span>
+    
+  </header>
+
+
+  <div class="content article-entry">
+    
+      
+        <img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/blog-web.png">
+      
+    
+  </div>
+</section>
 
   
 
@@ -897,23 +785,6 @@
 
 
 
-
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
-  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
-  <script type="text/javascript">
-    var gitalk = new Gitalk({
-      clientID: "9c3ba30f68564e88ff5a",
-      clientSecret: "96fdc1643060dc0b177fa05627e83eaba08781d8",
-      repo: "hexo-blog",
-      owner: "bubblewu",
-      admin: "bubblewu",
-      
-        id: location.pathname,      // Ensure uniqueness and length less than 50
-      
-      distractionFreeMode: false  // Facebook-like distraction free mode
-    });
-    gitalk.render('gitalk-container');
-  </script>
 
 
 

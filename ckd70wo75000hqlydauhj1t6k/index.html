@@ -16,12 +16,12 @@
 
   <!-- 页面元数据 -->
   
-    <title>002 虚拟机对象 - 大泡泡的笔记</title>
+    <title>Bubble Sort - 大泡泡的笔记</title>
   
-    <meta name="keywords" content="Java,JVM">
+    <meta name="keywords" content="面试">
   
   
-    <meta name="description" content="本文主要讲述HotSpot虚拟机在Java堆中对象分配、布局和访问的全过程。">
+    <meta name="description" content="经典面试题---进阶版冒泡排序">
   
 
   <!-- feed -->
@@ -353,8 +353,8 @@
         
           
   <h1 class="title">
-    <a href="/ckc0d6ptv0000qyydegky1iwy/">
-      002 虚拟机对象
+    <a href="/ckd70wo75000hqlydauhj1t6k/">
+      Bubble Sort
     </a>
   </h1>
 
@@ -379,9 +379,9 @@
               
   
   <div class="new-meta-item category">
-    <a href="/categories/Java/JVM/" rel="nofollow">
+    <a href="/categories/Python/" rel="nofollow">
       <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
-      <p>Java/JVM</p>
+      <p>Python</p>
     </a>
   </div>
 
@@ -392,17 +392,17 @@
               <div class="new-meta-item date">
   <a class="notlink">
     <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
-    <p>发布于：2020年6月29日</p>
+    <p>发布于：2020年5月11日</p>
   </a>
 </div>
 
             
           
             
-              <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-06-29T18:32:36+08:00">
+              <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-06-14T16:23:06+08:00">
   <a class="notlink">
     <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
-    <p>更新于：2020年6月29日</p>
+    <p>更新于：2020年6月14日</p>
   </a>
 </div>
 
@@ -418,13 +418,13 @@
   <div class="new-meta-item wordcount">
     <a class="notlink">
       <i class="fas fa-keyboard fa-fw" aria-hidden="true"></i>
-      <p>字数：1.5k字</p>
+      <p>字数：336字</p>
     </a>
   </div>
   <div class="new-meta-item readtime">
     <a class="notlink">
       <i class="fas fa-hourglass-half fa-fw" aria-hidden="true"></i>
-      <p>时长：5分钟</p>
+      <p>时长：1分钟</p>
     </a>
   </div>
 
@@ -459,45 +459,12 @@
       <section class="article typo">
         <div class="article-entry" itemprop="articleBody">
           
-          <p>本文主要讲述HotSpot虚拟机在Java堆中对象分配、布局和访问的全过程。</p>
+          <p>经典面试题---进阶版冒泡排序</p>
 <a id="more"></a>
 
-<h1 id="虚拟机对象"><a href="#虚拟机对象" class="headerlink" title="虚拟机对象"></a>虚拟机对象</h1><h2 id="对象的创建"><a href="#对象的创建" class="headerlink" title="对象的创建"></a>对象的创建</h2><h3 id="对象的创建流程"><a href="#对象的创建流程" class="headerlink" title="对象的创建流程"></a>对象的创建流程</h3><ul>
-<li>使用new指令来创建对象；</li>
-<li>首先检查这个指令的参数是否在常量池中定位到一个类的符号引用，并检查这个符号引用代表的类是否已经被加载、解析和初始化；</li>
-<li>如果没有，说明是新建，就先执行相应的类加载的过程；</li>
-<li>类加载检查通过后，为虚拟机新生对象分配堆内存；</li>
-<li>堆内存分配成功后，再把分配到的内存空间（不包括对象头）都初始化为零值；</li>
-<li>再执行类文件的<init>()方法，按照Dev的设定来进行构造，把对象进行初始化，得到一个真正的对象。</init></li>
-</ul>
-<h2 id="对象的内存布局"><a href="#对象的内存布局" class="headerlink" title="对象的内存布局"></a>对象的内存布局</h2><p>在HotSpot虚拟机里，对象在堆内存中的存储布局可以划分为三个部分：<code>对象头(Header)</code>、<code>实例
-数据(Instance Data)</code>和<code>对齐填充(Padding)</code>。</p>
-<h3 id="对象头（Header）"><a href="#对象头（Header）" class="headerlink" title="对象头（Header）"></a>对象头（Header）</h3><p>对象头包括两类信息：一是<code>用于存储对象自身的运行时数据</code>；二是<code>类型指针</code>。</p>
-<h4 id="1、存储对象自身的运行时数据"><a href="#1、存储对象自身的运行时数据" class="headerlink" title="1、存储对象自身的运行时数据"></a>1、存储对象自身的运行时数据</h4><p>如HashCode、GC分代年龄、锁状态标志、线程持有的锁、偏向线程ID、偏向时间戳等。<br>这部分数据的长度在32位和64位的虚拟机(未开启压缩指针)中分别为32个比特和64个比特，官方称它为<code>Mark Word</code>。</p>
-<blockquote>
-<p><strong>Mark Word</strong>被设计成一个有着动态定义的数据结构，以便在极小的空间内存储尽量多的数据，根据对象的状态复用自己的存储空间。</p>
-</blockquote>
-<h4 id="2、类型指针"><a href="#2、类型指针" class="headerlink" title="2、类型指针"></a>2、类型指针</h4><p>对象头的另外一部分是类型指针，即对象指向它的类型元数据的指针，Java虚拟机通过这个指针来确定该对象是哪个类的实例。</p>
-<blockquote>
-<p>并不是所有的虚拟机实现都必须在对象数据上保留类型指针，换句话说，查找对象的元数据信息并不一定要经过对象本身</p>
-</blockquote>
-<blockquote>
-<p>如果对象是一个Java数组，那在对象头中还必须有一块用于记录数组长度的数。<br>因为虚拟机可以通过普通 Java对象的元数据信息确定Java对象的大小，但是如果数组的长度是不确定的，将无法通过元数据中的 信息推断出数组的大小。</p>
-</blockquote>
-<h3 id="实例数据（Instance-Data）"><a href="#实例数据（Instance-Data）" class="headerlink" title="实例数据（Instance Data）"></a>实例数据（Instance Data）</h3><p>实例数据是对象真正存储等有效信息。也就是我们所定义的各种类型的字段内容，<br>无论是从父类继承下来的，还是在子类中定义的字段都必须记录起来。这部分的存储顺序会受到<strong>虚拟机分配策略参数</strong>(<code>-XX:FieldsAllocationStyle</code>参数)和<strong>字段在Java源码中定义顺序</strong>的影响。</p>
-<blockquote>
-<p>HotSpot虚拟机默认的分配顺序为longs/doubles、ints、shorts/chars、bytes/booleans、oops(Ordinary Object Pointers，OOPs)，<br>由上可知：相同宽度的字段总是被分配到一起存放，在满足这个前提条件的情况下，在父类中定义的变量会出现在子类之前。<br>如果HotSpot虚拟机的 <code>+XX:CompactFields</code>参数值为true(默认就为true)，那子类之中较窄的变量也允许插入父类变量的空隙之中，以节省出一点点空间。</p>
-</blockquote>
-<h3 id="对齐填充（Padding）"><a href="#对齐填充（Padding）" class="headerlink" title="对齐填充（Padding）"></a>对齐填充（Padding）</h3><p>对齐填充不是必然存在的，它仅仅起着占位符的作用。<br>由于HotSpot虚拟机的自动内存管理系统要求对象起始地址必须是<code>8字节的整数倍</code>。<br>换句话说就是<strong>任何对象的大小都必须是8字节的整数倍</strong>。<br>对象头部分已经被精心设计成正好是8字节的倍数(1倍或者2倍)，因此，如果对象实例数据部分没有对齐的话，就需要通过对齐填充来补全。</p>
-<h2 id="对象的访问定位"><a href="#对象的访问定位" class="headerlink" title="对象的访问定位"></a>对象的访问定位</h2><p>创建了对象就需要使用它，Java Dev会通过栈上的reference数据来操作堆上的具体对象。<br>由于<code>reference类型</code>在《Java虚拟机规范》里面只规定了它<strong>是一个指向对象的引用</strong>，并没有定义这个引用应该通过什么方式去定位、访问到堆中对象的具体位置。<br>所以对象访问方式也是由虚拟机实现而定的，主流的访问方式主要有<code>使用句柄</code>和<code>直接指针</code>两种。</p>
-<h3 id="两种方式"><a href="#两种方式" class="headerlink" title="两种方式"></a>两种方式</h3><h4 id="使用句柄访问对象"><a href="#使用句柄访问对象" class="headerlink" title="使用句柄访问对象"></a>使用句柄访问对象</h4><p>如果使用句柄访问的话，Java堆中将可能会划分出一块内存来作为句柄池，reference中存储的就是<strong>对象的句柄地址</strong>，而<strong>句柄中包含了对象实例数据与类型数据各自具体的地址信息</strong>。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/jvm/jubing.png" alt="使用句柄访问对象"></p>
-<h4 id="使用直接指针访问对象"><a href="#使用直接指针访问对象" class="headerlink" title="使用直接指针访问对象"></a>使用直接指针访问对象</h4><p>如果使用直接指针访问的话，Java堆中对象的内存布局就必须考虑如何放置访问类型数据的相关信息，reference中<strong>存储的直接就是对象地址</strong>，如果只是访问对象本身的话，就不需要多一次间接访问的开销。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/jvm/obj-zhizhen.png" alt="使用直接指针访问对象"></p>
-<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><ul>
-<li>使用句柄来访问的最大好处就是reference中存储的是稳定句柄地址，在对象被移动（垃圾收集时移动对象是非常普遍的行为）时只会改变句柄中的实例数据指针，而reference本身不需要被修改。</li>
-<li>使用直接指针来访问最大的好处就是速度更快，它节省了一次指针定位的时间开销，由于对象访 问在Java中非常频繁，因此这类开销积少成多也是一项极为可观的执行成本。</li>
-</ul>
+<h2 id="常规版"><a href="#常规版" class="headerlink" title="常规版"></a>常规版</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(data)</span>:</span></span><br><span class="line">    <span class="string">"""常规版"""</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(data)):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(len(data)-i<span class="number">-1</span>):</span><br><span class="line">            <span class="keyword">if</span> data[j] &gt; data[j+<span class="number">1</span>]:</span><br><span class="line">                data[j], data[j + <span class="number">1</span>] = data[j + <span class="number">1</span>], data[j]</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    data = [<span class="number">3</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">7</span>]</span><br><span class="line">    print(data)</span><br><span class="line">    print(foo(data))</span><br></pre></td></tr></table></figure>
+
+<h2 id="进阶版"><a href="#进阶版" class="headerlink" title="进阶版"></a>进阶版</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bubble_sort</span><span class="params">(data)</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    进阶版</span></span><br><span class="line"><span class="string">    最坏情况 时间复杂度 O(n**2)</span></span><br><span class="line"><span class="string">    最好情况 时间复杂度 O(n)</span></span><br><span class="line"><span class="string">    稳定排序法</span></span><br><span class="line"><span class="string">    空间复杂度最佳 只需要一个额外空间</span></span><br><span class="line"><span class="string">    适用于数据量小或有部分数据已经排过序的情况</span></span><br><span class="line"><span class="string">    :param data:</span></span><br><span class="line"><span class="string">    :return:</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># i 倒序循环列表排序</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(data)<span class="number">-1</span>, <span class="number">-1</span>, <span class="number">-1</span>):</span><br><span class="line">        flag = <span class="literal">False</span>  <span class="comment"># flag判断是否执行了交换操作</span></span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> range(i):  <span class="comment"># i 为倒序循环，所以j的最大值即是i 0～i</span></span><br><span class="line">            <span class="keyword">if</span> data[j] &gt; data[j + <span class="number">1</span>]:</span><br><span class="line">                data[j], data[j + <span class="number">1</span>] = data[j + <span class="number">1</span>], data[j]</span><br><span class="line">                flag = <span class="literal">True</span>  <span class="comment"># 执行过交换操作，把flag置为True</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> flag:  <span class="comment"># 执行完一次扫描后，判断是否执行过交换操作，如果没有交换过数据，就表示此时数组已完成排序，故直接跳出循环</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        print(<span class="string">'第&#123;0&#125;次排序: &#123;1&#125;'</span>.format(len(data)-i, data))</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    data = [<span class="number">3</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">4</span>, <span class="number">2</span>, <span class="number">6</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">9</span>, <span class="number">7</span>]</span><br><span class="line">    print(data)</span><br><span class="line">    print(bubble_sort(data))</span><br></pre></td></tr></table></figure>
 
           
             <div class="article_footer">
@@ -550,10 +517,10 @@
     <div class="new-meta-box">
       
         
-          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-06-29T18:32:36+08:00">
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-06-14T16:23:06+08:00">
   <a class="notlink">
     <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
-    <p>更新于：2020年6月29日</p>
+    <p>更新于：2020年6月14日</p>
   </a>
 </div>
 
@@ -563,9 +530,9 @@
           
   
   <div class="new-meta-item category">
-    <a href="/categories/Java/JVM/" rel="nofollow">
+    <a href="/categories/Python/" rel="nofollow">
       <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
-      <p>Java/JVM</p>
+      <p>Python</p>
     </a>
   </div>
 
@@ -575,7 +542,7 @@
         
           
   
-  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/Java/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/JVM/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>JVM</p></a></div>
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/%E9%9D%A2%E8%AF%95/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>面试</p></a></div>
 
 
         
@@ -586,7 +553,7 @@
   <div class="-mob-share-list share-body">
     
       
-        <a class="-mob-share-qq" title rel="external nofollow noopener noreferrer" href="http://connect.qq.com/widget/shareqq/index.html?url=https://bubblewu.github.io/ckc0d6ptv0000qyydegky1iwy/&title=002 虚拟机对象 - 大泡泡的笔记&summary=本文主要讲述HotSpot虚拟机在Java堆中对象分配、布局和访问的全过程。" target="_blank">
+        <a class="-mob-share-qq" title rel="external nofollow noopener noreferrer" href="http://connect.qq.com/widget/shareqq/index.html?url=https://bubblewu.github.io/ckd70wo75000hqlydauhj1t6k/&title=Bubble Sort - 大泡泡的笔记&summary=经典面试题---进阶版冒泡排序" target="_blank">
           
             <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qq.png">
           
@@ -594,7 +561,7 @@
       
     
       
-        <a class="-mob-share-qzone" title rel="external nofollow noopener noreferrer" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://bubblewu.github.io/ckc0d6ptv0000qyydegky1iwy/&title=002 虚拟机对象 - 大泡泡的笔记&summary=本文主要讲述HotSpot虚拟机在Java堆中对象分配、布局和访问的全过程。" target="_blank">
+        <a class="-mob-share-qzone" title rel="external nofollow noopener noreferrer" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://bubblewu.github.io/ckd70wo75000hqlydauhj1t6k/&title=Bubble Sort - 大泡泡的笔记&summary=经典面试题---进阶版冒泡排序" target="_blank">
           
             <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qzone.png">
           
@@ -602,7 +569,7 @@
       
     
       
-        <a class="-mob-share-weibo" title rel="external nofollow noopener noreferrer" href="http://service.weibo.com/share/share.php?url=https://bubblewu.github.io/ckc0d6ptv0000qyydegky1iwy/&title=002 虚拟机对象 - 大泡泡的笔记&summary=本文主要讲述HotSpot虚拟机在Java堆中对象分配、布局和访问的全过程。" target="_blank">
+        <a class="-mob-share-weibo" title rel="external nofollow noopener noreferrer" href="http://service.weibo.com/share/share.php?url=https://bubblewu.github.io/ckd70wo75000hqlydauhj1t6k/&title=Bubble Sort - 大泡泡的笔记&summary=经典面试题---进阶版冒泡排序" target="_blank">
           
             <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/weibo.png">
           
@@ -614,7 +581,7 @@
         <div class="hoverbox">
           <a><img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/wechat.png"></a>
           <div class="target">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATgAAAE4CAAAAADqFLC2AAADsklEQVR42u3aQXIiQQwEQP7/ae8LCKSSWASRfbMNM905l3JpHn9WtB4IwIEDB84CB+4I3CNcz77/9IYvPvfqPtXPP9vf2nnBgQMHDhw4cOCOwZUDYHFj1Z+7169+b/q5p/sBBw4cOHDgwIE7CjcNlN2AWoXrBudpIAYHDhw4cODAgft1uK3gmgbn7gMCBw4cOHDgwIED1/t89eDTwjEtVsGBAwcOHDhw4L4dLh3opgPh7eDaLUo/NskHBw4cOHDgwIFbguuubsC89nN8XnDgwIEDBw4cuCNw71rdAXIanKeBuH0ucODAgQMHDhy4I3DpC3tpQK4OkNNBd7qP8oAaHDhw4MCBAwfuCFw6aE5/nw6EqwPrbuHaDc7gwIEDBw4cOHDX4LY2nhaL00JzC+bl/cCBAwcOHDhw4I7AdYu/NNh2A+m7B+RxgQoOHDhw4MCBA3cEbnrhNIh2D1rd53QQ3v7PARw4cODAgQMH7sNw7SC4BJAWnNMXE9PgDQ4cOHDgwIEDdwWuGwSrhWUaoKeD52kR226AwYEDBw4cOHDgPgyXvoA3DczTonPrPuUHCg4cOHDgwIEDdwSuC5gWjtMiMw3M0+IUHDhw4MCBAwfuV+C6ReFWwbldbFa/93KSDw4cOHDgwIEDdwQuDcTVwnP7xcRp0dneNzhw4MCBAwcO3BG4FCId+KZQaXDdGpiDAwcOHDhw4MBdhXv3DacA6XW2Ajw4cODAgQMHDtw1uK2DdDc0ha0+8BQeHDhw4MCBAwfu2+CmA9xuwZjevwufgpUn+eDAgQMHDhw4cP8ZrnuwrYCcQqSF51ZRCw4cOHDgwIEDdwWue7A0qKaD4+0gPA3Q4MCBAwcOHDhwV+DSwe8UqBrA0xcNp7AvB9LgwIEDBw4cOHBH4LpA7xoET4Nzd8DdLl7BgQMHDhw4cOCOwVUvlA6Yq8G0G5DTB9h9EODAgQMHDhw4cN8Clw6MqwE3LhKbkNPBNzhw4MCBAwcO3FW46aoG2ir0FtBWsQoOHDhw4MCBA3cV7hGuacGZFppb14lhwYEDBw4cOHDgjsF1A28aPKcBdjoYH+8HHDhw4MCBAwfuKNw08HYDcPqA0qDd3Ud5kg8OHDhw4MCBA/elcNVgmQ6E06KyG4hfXgccOHDgwIEDB+5H4FKQaUCdDqI/XmSCAwcOHDhw4MB9eCA9BZ/Cbe27fA5w4MCBAwcOHLhjcGkgTQ8wDa7p36eFJjhw4MCBAwcO3BU4q7fAgQMHDpwFDtyH1z8Z8v1Esk/1TwAAAABJRU5ErkJggg==">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATgAAAE4CAAAAADqFLC2AAADl0lEQVR42u3aUXIiMQwEUO5/6d0DpKixWhpGCc9/JMDYzz9dal7/rGi9EIADBw6cBQ7cErhXuH584Zu/X73v6vurr0+fn54XHDhw4MCBAwduG1z1wVcbSv/fBZq64Lf7AAcOHDhw4MCBWwqXBtLTg6YA3f2MnRccOHDgwIEDB+6PwZ1+/u7PpcEaHDhw4MCBAwfuW+GqBfb0QBIcOHDgwIEDB+7b4coFbXMw2S2mqxe3pskHBw4cOHDgwIEbgquu7kGffh2fFxw4cODAgQMHbglcd10F2XTAWQ3K1f3F5wUHDhw4cODAgVsCN1UwnwKmBXJ3jV0oOHDgwIEDBw7cMrirB6RFdRX0riDeLb7BgQMHDhw4cOC2wnUhuwB3B+Iy0GmTDw4cOHDgwIED9xDcVICsFtJpsfx0oQ0OHDhw4MCBA7cV7nRDU8G3W1zfFYjLARgcOHDgwIEDB24Z3N3FcvUHgNVA3A3ebwtpcODAgQMHDhy4JXDpALH79zR4p4Vy+1zgwIEDBw4cOHDL4NIBYFoMd4P2XTDtQhocOHDgwIEDB+4huLsGm2nwPR083gUKDhw4cODAgQP32+DSVQ28pxc49bp6juMmHxw4cODAgQMH7mG4ciAc/txUAZ0OLtuFNDhw4MCBAwcO3Ifg0sB6F0x18FkdmHYHqODAgQMHDhw4cFvgPhV004N1v6+7//IgExw4cODAgQMH7kNwdxXD7eL3MCCn3x+/Dxw4cODAgQMHbhlcNzBWDzp1YdVivR34wYEDBw4cOHDglsGlwbU6eOwCdPdXLczBgQMHDhw4cOC2w00HyxSiG1RPn1+9aHDgwIEDBw4cuO1w1QFjWlxXA25aUHfPAw4cOHDgwIEDtx0uHTA+XVynYNULBgcOHDhw4MCB+y1waZD9FFQ12KaFdjkAgwMHDhw4cODALYOrDvzSQWQcTMMgXr1wcODAgQMHDhy4LXDd1S2gu8X21OD0OIiDAwcOHDhw4MAtgRsLhodA3SI8vbixiwYHDhw4cODAgVsGNxV4T0G7g8jpCzm+GHDgwIEDBw4cuKVwUxvtbvj0wqbWMSQ4cODAgQMHDtwfgzsNkHcPJrvBGxw4cODAgQMH7tvg0kFmGqC7ATz9gSE4cODAgQMHDtxWuOpGq+87DczVYJoOSh9r8sGBAwcOHDhw4IbgpgvcqQJ5Cra7T3DgwIEDBw4cuG1wVm2BAwcOHDgLHLiH13/l+oCXpjEd1QAAAABJRU5ErkJggg==">
           </div>
         </div>
       
@@ -634,22 +601,16 @@
         
           <div class="prev-next">
             
-              <a class="prev" href="/ckd5snfe30000anydb3v99he8/">
-                <p class="title"><i class="fas fa-chevron-left" aria-hidden="true"></i>动手实现：检查程序名称规范的编译器插件</p>
-                <p class="content">该案例主要为实现一个检查Java代码规范的编译器插件功能，编码规范遵循下面标准：
+              <a class="prev" href="/ckd70wo77000jqlyd8qx0g49p/">
+                <p class="title"><i class="fas fa-chevron-left" aria-hidden="true"></i>生产者-消费者案例</p>
+                <p class="content">基于Java的生产者-消费者模式代码实现，可以此为Demo来用于具体的实际业务。
 
-类或接口：符合驼式命名法，首字母大写。
-方法：符合驼式命名法，首字母小写。
-字段：类或实例变量。符合驼式命名法...</p>
+
+
+
+生产者-消费者demo12345678910111213141516171819202122232425...</p>
               </a>
             
-            
-              <a class="next" href="/ckbesij6t000029s67j9p5x9z/">
-                <p class="title">String类的intern()方法<i class="fas fa-chevron-right" aria-hidden="true"></i></p>
-                <p class="content">概述String::intern()是一个Native方法，用于返回该对象在常量池中的引用。
-1public native String intern();
-作用：如果字符串常量池中已经包含一个...</p>
-              </a>
             
           </div>
         
@@ -674,7 +635,7 @@
 
 
     <div class="content">
-      <ul class="popular-posts"><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckbarvw2z0045yayd50uf5v6u/" title="001 运行时数据区域和OutOfMemoryError异常" rel="bookmark">001 运行时数据区域和OutOfMemoryError异常</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckbarvw0y000fyayd2z9y58tz/" title="生产者-消费者案例" rel="bookmark">生产者-消费者案例</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckbesij6t000029s67j9p5x9z/" title="String类的intern()方法" rel="bookmark">String类的intern()方法</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckd5snfe30000anydb3v99he8/" title="动手实现：检查程序名称规范的编译器插件" rel="bookmark">动手实现：检查程序名称规范的编译器插件</a></h3></div></li></ul>
+      <ul class="popular-posts"><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckd70wo74000fqlydd4c020y6/" title="基于Neo4j的时光网电影数据可视化【附源码】" rel="bookmark">基于Neo4j的时光网电影数据可视化【附源码】</a></h3></div></li></ul>
     </div>
   </section>
 
@@ -717,7 +678,7 @@
 
   <script>
     window.subData = {
-      title: '002 虚拟机对象',
+      title: 'Bubble Sort',
       tools: true
     }
   </script>
@@ -784,7 +745,7 @@
 
 
     <div class="content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#对象的创建"><span class="toc-number">1.</span> <span class="toc-text">对象的创建</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#对象的创建流程"><span class="toc-number">1.1.</span> <span class="toc-text">对象的创建流程</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象的内存布局"><span class="toc-number">2.</span> <span class="toc-text">对象的内存布局</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#对象头（Header）"><span class="toc-number">2.1.</span> <span class="toc-text">对象头（Header）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1、存储对象自身的运行时数据"><span class="toc-number">2.1.1.</span> <span class="toc-text">1、存储对象自身的运行时数据</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2、类型指针"><span class="toc-number">2.1.2.</span> <span class="toc-text">2、类型指针</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实例数据（Instance-Data）"><span class="toc-number">2.2.</span> <span class="toc-text">实例数据（Instance Data）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对齐填充（Padding）"><span class="toc-number">2.3.</span> <span class="toc-text">对齐填充（Padding）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象的访问定位"><span class="toc-number">3.</span> <span class="toc-text">对象的访问定位</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#两种方式"><span class="toc-number">3.1.</span> <span class="toc-text">两种方式</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#使用句柄访问对象"><span class="toc-number">3.1.1.</span> <span class="toc-text">使用句柄访问对象</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#使用直接指针访问对象"><span class="toc-number">3.1.2.</span> <span class="toc-text">使用直接指针访问对象</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#对比"><span class="toc-number">3.2.</span> <span class="toc-text">对比</span></a></li></ol></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#常规版"><span class="toc-number">1.</span> <span class="toc-text">常规版</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进阶版"><span class="toc-number">2.</span> <span class="toc-text">进阶版</span></a></li></ol>
     </div>
   </section>
 
