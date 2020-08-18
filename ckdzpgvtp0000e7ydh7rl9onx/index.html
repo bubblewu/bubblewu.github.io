@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme="https://volantis.js.org/#20200605">
+  <meta charset="utf-8">
+  <!-- SEO相关 -->
+  
+    
+  
+  <!-- 渲染优化 -->
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- 页面元数据 -->
+  
+    <title>并发模式-5：Producer-Consumer模式：生产者消费者 - 大泡泡的笔记</title>
+  
+    <meta name="keywords" content="Java,并发">
+  
+  
+    <meta name="description" content="生产者消费者模式，即N个线程进行生产，同时N个线程进行消费，两种角色通过内存缓冲区进行通信。">
+  
+
+  <!-- feed -->
+  
+
+  <!-- import meta -->
+  
+    
+      <meta name="theme-color" content="#FFFFFF">
+    
+      <meta name="msapplication-TileColor" content="#1BC3FB">
+    
+      <meta name="msapplication-config" content="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/browserconfig.xml">
+    
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13/css/all.min.css">
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+
+  
+
+  
+  <link rel="shortcut icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/wongqingbin/PicGo/favicon.ico">
+  
+
+  
+
+  <!-- import link -->
+  
+  
+  <link rel="shortcut icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicon.ico">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/favicon-32x32.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/apple-touch-icon.png">
+  <link rel="mask-icon" color="#1BC3FB" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/safari-pinned-tab.svg">
+  <link rel="manifest" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/site.webmanifest">
+  
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2.6.5/css/style.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+</head>
+
+<body>
+  
+  <div id="loading-bar-wrapper">
+  <div id="loading-bar"></div>
+</div>
+<header class="l_header shadow blur">
+  <div class="container">
+  <div class="wrapper">
+    <div class="nav-sub">
+      <p class="title"></p>
+      <ul class="switcher nav-list-h">
+        <li><a class="s-comment fas fa-comments fa-fw" target="_self" href="javascript:void(0)"></a></li>
+        
+          <li><a class="s-toc fas fa-list fa-fw" target="_self" href="javascript:void(0)"></a></li>
+        
+      </ul>
+    </div>
+		<div class="nav-main">
+      
+        
+        <a class="title flat-box" target="_self" href="/">
+          
+          
+          
+            Bubble
+          
+          
+        </a>
+      
+
+			<div class="menu navigation">
+				<ul class="nav-list-h">
+          
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/" id="home">
+                  <i class="fas fa-home fa-fw fa-fw"></i>主页
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/categories/" id="categories">
+                  <i class="fas fa-folder-open fa-fw"></i>分类
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/tags/" id="tags">
+                  <i class="fas fa-tags fa-fw"></i>标签
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/archives/" id="archives">
+                  <i class="fas fa-archive fa-fw"></i>时间轴
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box">
+                  <i class="fas fa-ellipsis-v fa-fw"></i>更多
+                </a>
+                
+                  <ul class="list-v">
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/about/" id="about">
+                  <i class="fas fa-info-circle fa-fw"></i>关于小站
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="https://github.com/bubblewu/hexo-blog" target="_blank" id="https:githubcombubblewuhexo-blog" rel="external nofollow noopener noreferrer">
+                  <i class="fab fa-github fa-fw"></i>博客源码
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/contributors/" id="contributors">
+                  <i class="fas fa-handshake fa-fw"></i>鸣谢
+                </a>
+                
+              </li>
+            
+          
+                    
+                  </ul>
+                
+              </li>
+            
+          
+          
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="Search...">
+        </form>
+      </div>
+
+			<ul class="switcher nav-list-h">
+				
+					<li><a class="s-search fas fa-search fa-fw" target="_self" href="javascript:void(0)"></a></li>
+				
+				<li>
+          <a class="s-menu fas fa-bars fa-fw" target="_self" href="javascript:void(0)"></a>
+          <ul class="menu-phone list-v navigation white-box">
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/" id="home">
+                  <i class="fas fa-home fa-fw fa-fw"></i>主页
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/categories/" id="categories">
+                  <i class="fas fa-folder-open fa-fw"></i>分类
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/tags/" id="tags">
+                  <i class="fas fa-tags fa-fw"></i>标签
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/archives/" id="archives">
+                  <i class="fas fa-archive fa-fw"></i>时间轴
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box">
+                  <i class="fas fa-ellipsis-v fa-fw"></i>更多
+                </a>
+                
+                  <ul class="list-v">
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/about/" id="about">
+                  <i class="fas fa-info-circle fa-fw"></i>关于小站
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="https://github.com/bubblewu/hexo-blog" target="_blank" id="https:githubcombubblewuhexo-blog" rel="external nofollow noopener noreferrer">
+                  <i class="fab fa-github fa-fw"></i>博客源码
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/contributors/" id="contributors">
+                  <i class="fas fa-handshake fa-fw"></i>鸣谢
+                </a>
+                
+              </li>
+            
+          
+                    
+                  </ul>
+                
+              </li>
+            
+          
+            
+          </ul>
+        </li>
+			</ul>
+		</div>
+	</div>
+  </div>
+</header>
+
+<script>setLoadingBarProgress(40);</script>
+
+
+
+  <div class="l_body nocover">
+    <div class="body-wrapper">
+      
+
+<div class="l_main">
+  
+
+  
+    <article id="post" class="post white-box reveal shadow article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class="meta">
+    
+      
+      
+      <div class="meta" id="header-meta">
+        
+          
+  <h1 class="title">
+    <a href="/ckdzpgvtp0000e7ydh7rl9onx/">
+      并发模式-5：Producer-Consumer模式：生产者消费者
+    </a>
+  </h1>
+
+
+        
+        <div class="new-meta-box">
+          
+            
+          
+            
+              
+<div class="new-meta-item author">
+  <a href="https://bubblewu.github.io/" rel="nofollow">
+    <img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/bubble.png">
+    <p>大泡泡</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+  
+  <div class="new-meta-item category">
+    <a href="/categories/Java/%E5%B9%B6%E5%8F%91/" rel="nofollow">
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
+      <p>Java/并发</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              <div class="new-meta-item date">
+  <a class="notlink">
+    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+    <p>发布于：2020年8月18日</p>
+  </a>
+</div>
+
+            
+          
+            
+              <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-08-18T16:48:43+08:00">
+  <a class="notlink">
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：2020年8月18日</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+
+            
+          
+            
+              
+  <div class="new-meta-item wordcount">
+    <a class="notlink">
+      <i class="fas fa-keyboard fa-fw" aria-hidden="true"></i>
+      <p>字数：2.5k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class="notlink">
+      <i class="fas fa-hourglass-half fa-fw" aria-hidden="true"></i>
+      <p>时长：11分钟</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class="notlink">
+        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv"></span>
+        </p>
+      </a>
+    </div>
+  
+
+
+            
+          
+        </div>
+        
+          <hr>
+        
+      </div>
+    
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <p>生产者消费者模式，即<code>N个线程进行生产，同时N个线程进行消费，两种角色通过内存缓冲区进行通信。</code></p>
+<a id="more"></a>
+
+<h2 id="Producer-Consumer模式"><a href="#Producer-Consumer模式" class="headerlink" title="Producer-Consumer模式"></a>Producer-Consumer模式</h2><p>生产者消费者模式，即<code>N个线程进行生产，同时N个线程进行消费，两种角色通过内存缓冲区进行通信。</code></p>
+<h3 id="三个角色"><a href="#三个角色" class="headerlink" title="三个角色"></a>三个角色</h3><p>在Producer-Consumer模式，承担安全守护责任的是<code>Channel角色</code>。<code>Channel角色执行线程间的互斥处理，确保Producer角色正确地将Data角色传递给Consumer角色。</code></p>
+<h4 id="Channel角色"><a href="#Channel角色" class="headerlink" title="Channel角色"></a>Channel角色</h4><p>Producer-Consumer模式为了Producer向Consumer传递Data，在中间设置了Channel角色。</p>
+<ul>
+<li><code>Producer直接调用Consumer的方法</code>：<br>如Producer直接调用Consumer的方法，那么执行处理的就不是Consumer的线程，而是Producer的线程了。这样执行处理花费的时间就必须由Producer的线程来承担，准备下一个数据的处理也会发生相应的延迟，会使程序的响应性变得差。</li>
+</ul>
+<p>就好像：糕点师傅做好蛋糕，直接交给客人，在客人吃完后再做下一个蛋糕一样。</p>
+<ul>
+<li><code>借助Channel角色</code>：<br>Producer将Data传递给Channel角色后，无需等待Consumer角色对Data进行处理，就可以立即开始准备下一个Data。<br>也就是，<strong>Producer可以持续不断地创建Data，而不会受到Consumer角色的处理进度影响。</strong></li>
+</ul>
+<h5 id="如何传递Data"><a href="#如何传递Data" class="headerlink" title="如何传递Data"></a>如何传递Data</h5><ul>
+<li><p><code>队列：先接收的先传递</code><br>使用FIFO先进先出的队列来实现。</p>
+</li>
+<li><p><code>栈：后接收的先传递</code><br>使用LIFO后进先出的栈来实现。</p>
+</li>
+<li><p><code>优先队列：优先级高的先传递</code><br>使用优先队列来实现，Channel角色给收到的Data设置优先级，优先级高的先传递给Consumer来处理。</p>
+</li>
+</ul>
+<h5 id="存在意义"><a href="#存在意义" class="headerlink" title="存在意义"></a>存在意义</h5><p>因为Channel的存在，Producer和Consumer这些线程才能保持协调运行。<br>Channel这个中间角色可以实现线程的协调运行。</p>
+<ul>
+<li>线程的<code>协调运行</code>要考虑：<code>放在中间的东西</code>。</li>
+<li>线程的<code>互斥处理</code>要考虑：<code>应该保护的东西</code>。</li>
+</ul>
+<p>协调运行和互斥处理是内外统一的。<br>为了让线程协调运行，必须执行互斥处理，以防止共享的内容被破坏；<br>线程的互斥处理是为了线程的协调运行才执行的。</p>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>生产者消费者模式Demo：<br>旋转小餐厅里，有3位师傅制作蛋糕放到桌子上，然后有3位客人来吃这些蛋糕。<br>主要业务点：</p>
+<ul>
+<li>师傅（MakerThread）制作蛋糕（String），并将其放置在桌子（Table）上；</li>
+<li>桌子上最多可以放置3个蛋糕；</li>
+<li>如果桌子上已经放满3个，就需等有空余位置时才能继续放置；</li>
+<li>客人（EaterThread）按蛋糕放置等顺序来取桌子（Table）上等蛋糕来吃；</li>
+<li>当桌子没有蛋糕时，客人就需等待直到有蛋糕放入；</li>
+</ul>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><ul>
+<li><p>Main函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Table table = <span class="keyword">new</span> Table(<span class="number">3</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">3</span>; i++) &#123;</span><br><span class="line">            MakerThread makerThread = <span class="keyword">new</span> MakerThread(<span class="string">"-&gt; Maker."</span> + i, table, <span class="number">2020</span> + i);</span><br><span class="line">            makerThread.start();</span><br><span class="line">            EaterThread eaterThread = <span class="keyword">new</span> EaterThread(<span class="string">"Eater."</span> + i, table, <span class="number">2020</span> + i);</span><br><span class="line">            eaterThread.start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">-&gt; Maker.1 put: Cake No.0 by -&gt; Maker.1</span><br><span class="line">Eater.2 take: Cake No.0 by -&gt; Maker.1</span><br><span class="line">-&gt; Maker.2 put: Cake No.1 by -&gt; Maker.2</span><br><span class="line">Eater.0 take: Cake No.1 by -&gt; Maker.2</span><br><span class="line">-&gt; Maker.0 put: Cake No.2 by -&gt; Maker.0</span><br><span class="line">Eater.2 take: Cake No.2 by -&gt; Maker.0</span><br><span class="line">-&gt; Maker.1 put: Cake No.3 by -&gt; Maker.1</span><br><span class="line">Eater.1 take: Cake No.3 by -&gt; Maker.1</span><br><span class="line">-&gt; Maker.0 put: Cake No.4 by -&gt; Maker.0</span><br><span class="line">Eater.1 take: Cake No.4 by -&gt; Maker.0</span><br><span class="line">-&gt; Maker.2 put: Cake No.5 by -&gt; Maker.2</span><br><span class="line">Eater.0 take: Cake No.5 by -&gt; Maker.2</span><br><span class="line">-&gt; Maker.1 put: Cake No.6 by -&gt; Maker.1</span><br><span class="line">Eater.0 take: Cake No.6 by -&gt; Maker.1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Channel角色 Table类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Channel角色：表示桌子</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wugang</span></span><br><span class="line"><span class="comment"> * date: 2020-07-16 19:59</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Table</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 盘子：放置蛋糕的数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String[] dishArray;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 下一次放置蛋糕的位置</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> tail;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 下一次取蛋糕的位置</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> head;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 当前桌子上放置的蛋糕个数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> count;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Table</span><span class="params">(<span class="keyword">int</span> totalCount)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.dishArray = <span class="keyword">new</span> String[totalCount];</span><br><span class="line">        <span class="keyword">this</span>.head = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">this</span>.tail = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">this</span>.count = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 放置蛋糕</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> cake 蛋糕</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String cake)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">" put: "</span> + cake);</span><br><span class="line">        <span class="comment">// 最多只能放置3个</span></span><br><span class="line">        <span class="keyword">while</span> (count &gt;= dishArray.length) &#123;</span><br><span class="line">            wait();</span><br><span class="line">        &#125;</span><br><span class="line">        dishArray[tail] = cake;</span><br><span class="line">        <span class="comment">// 取下一次要放置的位置</span></span><br><span class="line">        tail = (tail + <span class="number">1</span>) % dishArray.length;</span><br><span class="line">        count++;</span><br><span class="line">        notifyAll();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 取蛋糕</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 蛋糕</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> String <span class="title">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">// 桌子上没有蛋糕，等待</span></span><br><span class="line">        <span class="keyword">while</span> (count &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">            wait();</span><br><span class="line">        &#125;</span><br><span class="line">        String cake = dishArray[head];</span><br><span class="line">        <span class="comment">// 取下一次要取的位置</span></span><br><span class="line">        head = (head + <span class="number">1</span>) % dishArray.length;</span><br><span class="line">        count--;</span><br><span class="line">        notifyAll();</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">" take: "</span> + cake);</span><br><span class="line">        <span class="keyword">return</span> cake;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>基于juc的队列来实现Table：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 基于juc的队列来实现Table</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wugang</span></span><br><span class="line"><span class="comment"> * date: 2020-07-17 17:57</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TableQueue</span> <span class="keyword">extends</span> <span class="title">ArrayBlockingQueue</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TableQueue</span><span class="params">(<span class="keyword">int</span> capacity)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(capacity);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String cake)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">" put: "</span> + cake);</span><br><span class="line">        <span class="keyword">super</span>.put(cake);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">take</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        String cake = <span class="keyword">super</span>.take();</span><br><span class="line">        System.out.println(Thread.currentThread().getName() + <span class="string">" take: "</span> + cake);</span><br><span class="line">        <span class="keyword">return</span> cake;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>MakerThread生产者：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 表示糕点师</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wugang</span></span><br><span class="line"><span class="comment"> * date: 2020-07-16 20:00</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MakerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Random random;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Table table;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 蛋糕的流水号，所有糕点师共用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> id = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MakerThread</span><span class="params">(String name, Table table, <span class="keyword">long</span> seed)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">        <span class="keyword">this</span>.table = table;</span><br><span class="line">        <span class="keyword">this</span>.random = <span class="keyword">new</span> Random(seed);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                TimeUnit.MILLISECONDS.sleep(random.nextInt(<span class="number">1000</span>));</span><br><span class="line">                String cake = <span class="string">"Cake No."</span> + nextId() + <span class="string">" by "</span> + getName();</span><br><span class="line">                table.put(cake);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> <span class="title">nextId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>EaterThread消费者：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 表示来吃蛋糕的客人</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wugang</span></span><br><span class="line"><span class="comment"> * date: 2020-07-16 20:00</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EaterThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Random random;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Table table;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EaterThread</span><span class="params">(String name, Table table, <span class="keyword">long</span> seed)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">        <span class="keyword">this</span>.table = table;</span><br><span class="line">        <span class="keyword">this</span>.random = <span class="keyword">new</span> Random(seed);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                String cake = table.take();</span><br><span class="line">                TimeUnit.MILLISECONDS.sleep(random.nextInt(<span class="number">1000</span>));</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><h3 id="常用队列"><a href="#常用队列" class="headerlink" title="常用队列"></a>常用队列</h3><ul>
+<li><p><code>ArrayBlockingQueue类</code>：基于数组的BlockingQueue<br>表示元素个数有最大限制的BlockingQueue。<br>当队列满了仍put数据时，或队列为空仍要take数据时，线程会阻塞，</p>
+</li>
+<li><p><code>LinkedBlockingQueue类</code>：基于链表的BlockingQueue<br>表示元素个数没有最大限制的BlockingQueue。<br>该类基于链表，如果没有特别指定，元素个数没有最大限制，只要还有内存，就可以put数据。</p>
+</li>
+<li><p><code>PriorityBlockingQueue类</code>：带有优先级的BlockingQueue<br>表示有优先级的BlockingQueue。<br>数据的优先级时根据Comparable接口的自然排序，或构造函数的Comparator接口决定的顺序指定。</p>
+</li>
+<li><p><code>DelayQueue类</code>：一定时间之后才可以take的BlockingQueue<br>表示用于存储java.util.concurrent.Delayed对象的队列。<br>当从该队列take时，只有在各元素指定的时间到期后才可以take。</p>
+</li>
+<li><p><code>SynchronousQueue类</code>：直接传递的BlockingQueue<br>SynchronousQueue类表示的是BlockingQueue，该BlockingQueue用于执行由Producer角色到Consumer角色的直接传递。<br>如果Producer先put，在Consumer进行take之前，Producer的线程会一直阻塞。相反，如Consumer先take，在Producer执行put之前，Consumer的线程将会一直阻塞。</p>
+</li>
+<li><p><code>ConcurrentLinkedQueue类</code>：元素个数没有最大限制的线程安全队列<br>ConcurrentLinkedQueue类并不是BlockingQueue的实现类，它表示元素个数没有最大限制的线程安全队列。<br>在ConcurrentLinkedQueue中，内部的数据结构是分开的，线程之间互不影响，所以就无需进行互斥处理。</p>
+</li>
+</ul>
+<h3 id="java-util-concurrent-Exchanger类交换缓冲区"><a href="#java-util-concurrent-Exchanger类交换缓冲区" class="headerlink" title="java.util.concurrent.Exchanger类交换缓冲区"></a>java.util.concurrent.Exchanger类交换缓冲区</h3><p><code>java.util.concurrent.Exchanger类</code>用于<code>让两个线程安全地交换对象</code>。</p>
+<p>如上案例，可以将buffer1缓冲区传递给ProducerThread，然后将buffer2缓冲区传递给ConsumerThread，同时还会将通用的Exchanger的实例分别传递给ProducerThread和ConsumerThread。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/concurrent/exchanger.png" alt="exchanger交换缓冲区"></p>
+<ul>
+<li>Main类：<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Exchanger&lt;Object[]&gt; exchanger = <span class="keyword">new</span> Exchanger&lt;&gt;();</span><br><span class="line">        Object[] buffer1 = <span class="keyword">new</span> Object[<span class="number">3</span>];</span><br><span class="line">        Object[] buffer2 = <span class="keyword">new</span> Object[<span class="number">3</span>];</span><br><span class="line">        MakerExchangerThread makerThread = <span class="keyword">new</span> MakerExchangerThread(<span class="string">"-&gt; Maker."</span>, exchanger, buffer1, <span class="number">2020</span>);</span><br><span class="line">        makerThread.start();</span><br><span class="line">        EaterExchangerThread eaterThread = <span class="keyword">new</span> EaterExchangerThread(<span class="string">"Eater."</span>, exchanger, buffer2, <span class="number">2030</span>);</span><br><span class="line">        eaterThread.start();</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">Eater.: Before exchange</span><br><span class="line">-&gt; Maker. put: 0</span><br><span class="line">-&gt; Maker. put: 1</span><br><span class="line">-&gt; Maker. put: 2</span><br><span class="line">-&gt; Maker.: Before exchange</span><br><span class="line">-&gt; Maker.: After exchange</span><br><span class="line">Eater.: After exchange</span><br><span class="line">Eater. take: 0</span><br><span class="line">Eater. take: 1</span><br><span class="line">-&gt; Maker. put: 3</span><br><span class="line">Eater. take: 2</span><br><span class="line">-&gt; Maker. put: 4</span><br><span class="line">-&gt; Maker. put: 5</span><br><span class="line">-&gt; Maker.: Before exchange</span><br><span class="line">Eater.: Before exchange</span><br><span class="line">Eater.: After exchange</span><br><span class="line">-&gt; Maker.: After exchange</span><br><span class="line">Eater. take: 3</span><br><span class="line">Eater. take: 4</span><br><span class="line">-&gt; Maker. put: 6</span><br><span class="line">Eater. take: 5</span><br><span class="line">Eater.: Before exchange</span><br><span class="line">-&gt; Maker. put: 7</span><br><span class="line">-&gt; Maker. put: 8</span><br><span class="line">-&gt; Maker.: Before exchange</span><br><span class="line">-&gt; Maker.: After exchange</span><br><span class="line">Eater.: After exchange</span><br><span class="line">Eater. take: 6</span><br><span class="line">-&gt; Maker. put: 9</span><br><span class="line">Eater. take: 7</span><br><span class="line">-&gt; Maker. put: 10</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>MakerExchangerThread生成者：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 表示糕点师</span></span><br><span class="line"><span class="comment"> * 基于juc包下的Exchanger类： 用于让两个线程安全地交换对象。</span></span><br><span class="line"><span class="comment"> * 主要步骤：</span></span><br><span class="line"><span class="comment"> * - 生产端填充字符，直到缓冲区被填满；</span></span><br><span class="line"><span class="comment"> * - 使用exchange方法将填满的缓冲区传递给消费端；</span></span><br><span class="line"><span class="comment"> * - 传递完成后，作为交换，接收消费端已经消费完的空的缓冲区；</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wugang</span></span><br><span class="line"><span class="comment"> * date: 2020-07-16 20:00</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MakerExchangerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Exchanger&lt;Object[]&gt; exchanger;</span><br><span class="line">    <span class="keyword">private</span> Object[] dishArray;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Random random;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 蛋糕的流水号，所有糕点师共用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> id = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MakerExchangerThread</span><span class="params">(String name, Exchanger&lt;Object[]&gt; exchanger, Object[] dishArray, <span class="keyword">long</span> seed)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">        <span class="keyword">this</span>.exchanger = exchanger;</span><br><span class="line">        <span class="keyword">this</span>.dishArray = dishArray;</span><br><span class="line">        <span class="keyword">this</span>.random = <span class="keyword">new</span> Random(seed);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 向缓冲区填充字符</span></span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; dishArray.length; i++) &#123;</span><br><span class="line">                    dishArray[i] = nextId();</span><br><span class="line">                    TimeUnit.MILLISECONDS.sleep(random.nextInt(<span class="number">1000</span>));</span><br><span class="line">                    System.out.println(getName() + <span class="string">" put: "</span> + dishArray[i]);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 交换缓冲区</span></span><br><span class="line">                System.out.println(getName() + <span class="string">": Before exchange"</span>);</span><br><span class="line">                dishArray = exchanger.exchange(dishArray);</span><br><span class="line">                System.out.println(getName() + <span class="string">": After exchange"</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> <span class="title">nextId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> id++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>EaterExchangerThread消费者：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 表示来吃蛋糕的客人</span></span><br><span class="line"><span class="comment"> * 基于juc包下的Exchanger类： 用于让两个线程安全地交换对象。</span></span><br><span class="line"><span class="comment"> * 主要步骤：</span></span><br><span class="line"><span class="comment"> * - 使用exchange方法将空的缓冲区传递给生产端；</span></span><br><span class="line"><span class="comment"> * - 传递完成后，作为交换，接收生产端已经填满的缓冲区；</span></span><br><span class="line"><span class="comment"> * - 使用满的缓冲区的数据；</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wugang</span></span><br><span class="line"><span class="comment"> * date: 2020-07-16 20:00</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EaterExchangerThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Exchanger&lt;Object[]&gt; exchanger;</span><br><span class="line">    <span class="keyword">private</span> Object[] dishArray;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Random random;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">EaterExchangerThread</span><span class="params">(String name, Exchanger&lt;Object[]&gt; exchanger, Object[] dishArray, <span class="keyword">long</span> seed)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">        <span class="keyword">this</span>.exchanger = exchanger;</span><br><span class="line">        <span class="keyword">this</span>.dishArray = dishArray;</span><br><span class="line">        <span class="keyword">this</span>.random = <span class="keyword">new</span> Random(seed);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 交换缓冲区</span></span><br><span class="line">                System.out.println(getName() + <span class="string">": Before exchange"</span>);</span><br><span class="line">                dishArray = exchanger.exchange(dishArray);</span><br><span class="line">                System.out.println(getName() + <span class="string">": After exchange"</span>);</span><br><span class="line">                <span class="comment">// 从缓冲区中取出蛋糕</span></span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; dishArray.length; i++) &#123;</span><br><span class="line">                    System.out.println(getName() + <span class="string">" take: "</span> + dishArray[i]);</span><br><span class="line">                    TimeUnit.MILLISECONDS.sleep(random.nextInt(<span class="number">1000</span>));</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+          
+            <div class="article_footer">
+              
+                
+  
+    
+    
+
+
+
+  
+
+  
+    
+    
+
+
+
+  
+
+  
+    
+    
+
+<section class="widget qrcode  desktop mobile">
+  
+
+  <div class="content article-entry">
+    
+      
+        <div class="fancybox"><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/pay.jpeg" height="300px"></div>
+      
+    
+  </div>
+</section>
+
+  
+
+
+              
+            </div>
+          
+        </div>
+        
+          
+
+
+  <section class="meta" id="footer-meta">
+    <div class="new-meta-box">
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2020-08-18T16:48:43+08:00">
+  <a class="notlink">
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：2020年8月18日</p>
+  </a>
+</div>
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item category">
+    <a href="/categories/Java/%E5%B9%B6%E5%8F%91/" rel="nofollow">
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
+      <p>Java/并发</p>
+    </a>
+  </div>
+
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/Java/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/%E5%B9%B6%E5%8F%91/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>并发</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title rel="external nofollow noopener noreferrer" href="http://connect.qq.com/widget/shareqq/index.html?url=https://bubblewu.github.io/ckdzpgvtp0000e7ydh7rl9onx/&title=并发模式-5：Producer-Consumer模式：生产者消费者 - 大泡泡的笔记&summary=生产者消费者模式，即N个线程进行生产，同时N个线程进行消费，两种角色通过内存缓冲区进行通信。" target="_blank">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title rel="external nofollow noopener noreferrer" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://bubblewu.github.io/ckdzpgvtp0000e7ydh7rl9onx/&title=并发模式-5：Producer-Consumer模式：生产者消费者 - 大泡泡的笔记&summary=生产者消费者模式，即N个线程进行生产，同时N个线程进行消费，两种角色通过内存缓冲区进行通信。" target="_blank">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title rel="external nofollow noopener noreferrer" href="http://service.weibo.com/share/share.php?url=https://bubblewu.github.io/ckdzpgvtp0000e7ydh7rl9onx/&title=并发模式-5：Producer-Consumer模式：生产者消费者 - 大泡泡的笔记&summary=生产者消费者模式，即N个线程进行生产，同时N个线程进行消费，两种角色通过内存缓冲区进行通信。" target="_blank">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        
+        <div class="hoverbox">
+          <a><img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/wechat.png"></a>
+          <div class="target">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATgAAAE4CAAAAADqFLC2AAADmklEQVR42u3aQZIiMQwEQP7/6dkXbLRVUq+1TPoGAdhKX0SpPz9WtD4IwIEDB84CB24J3Cdc8cYPv9N9/+m83XrBgQMHDhw4cOC2wVULf4I4Bf/b91Kg9GKO6wUHDhw4cODAgVsKd9pAVhvU09+rNtpPn6vu9/h5cODAgQMHDhy4L4PrBolpoWnDDg4cOHDgwIED99vhTgtJL2DqQsCBAwcOHDhw4L4dLg0OU8DuoLsbnF6b5IMDBw4cOHDgwA3BVVc1KNz2Oq4XHDhw4MCBAwduCdzU6gaHUwPw03PFdYIDBw4cOHDgwC2B6zaUacDZDRpPB9BTFw4OHDhw4MCBA7cNLm0Yuw8cVhvhqQF4esHgwIEDBw4cOHDb4KYL6z74VwXo/k71fODAgQMHDhw4cNvgqoFjFbgbaKbfn9ofHDhw4MCBAwduG1w6qD090HTA+FbweQwKDhw4cODAgQO3HC7d8O3A8qe4qhcKDhw4cODAgQP3v8CVg7zhwPJ0v/T1VIMPDhw4cODAgQO3Ha4aDE4dsNsInw6k0wsDBw4cOHDgwIHbCvdWo5sGmungeur7xw0wOHDgwIEDBw7cJbi0wU0b0urr6ffbFwcOHDhw4MCBA7cErho0pg1vNSCdClarjfv4Pwdw4MCBAwcOHLh/BJcetFvoVOHT4McDaXDgwIEDBw4cuEtw3eByOmhMYU/hq8EtOHDgwIEDBw7cNrhukFgdNFcLmxqMjweZ4MCBAwcOHDhwl+HeCgan4U8b1HSwfnyR4MCBAwcOHDhwy+CqgV4cBBaDzm7j3G3Qy5N8cODAgQMHDhy4S3BdoBRgCnCqEQcHDhw4cODAgdsONxVcpgHh9MC42ijHA2lw4MCBAwcOHLjLcNsKf+sBwRQSHDhw4MCBAwduK9xbG3SDy+rn0kCz3OCDAwcOHDhw4MAtgZtuIKeDw+lzdgfU4MCBAwcOHDhwW+C6ayo4nAZNB9blfw7gwIEDBw4cOHCX4LqD5mnYbuP7VkAKDhw4cODAgQO3FS6FmAJ8KrwaoKb7xANpcODAgQMHDhy4y3CnB+wOoLvg1X3HLgIcOHDgwIEDB+5L4KYb2DhgDAPSalAKDhw4cODAgQP3LXBpI/oWeLXxBgcOHDhw4MCB+xa4dCB9ClMdUE8FkVMXAg4cOHDgwIEDtw1ufHB72BhPPUg4NbguD6TBgQMHDhw4cOAuwVnFBx0RgAMHDpwFDtzd9Qd7lwIIsE7laAAAAABJRU5ErkJggg==">
+          </div>
+        </div>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+          <div class="prev-next">
+            
+            
+              <a class="next" href="/ckdzpgvu20005e7yd6yeper0b/">
+                <p class="title">并发模式-4：Balking模式：停止并返回<i class="fas fa-chevron-right" aria-hidden="true"></i></p>
+                <p class="content">Balking模式：如果现在不适合或没必要执行这个操作，就停止处理，直接返回。
+
+
+Balking模式
+思想：Balking就是停止返回的意思。Balking模式：如果现在不适合或没必要执行这个...</p>
+              </a>
+            
+          </div>
+        
+      </section>
+    </article>
+  
+
+  
+    
+  
+    
+    
+  
+
+  <section class="widget related_posts shadow desktop mobile">
+    
+  <header>
+    
+      <i class="fas fa-bookmark fa-fw" aria-hidden="true"></i><span class="name">相关文章</span>
+    
+  </header>
+
+
+    <div class="content">
+      <ul class="popular-posts"><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckd70wo7j0017qlydgj2w1nq3/" title="并发：多线程程序的评价标准" rel="bookmark">并发：多线程程序的评价标准</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckd8g12ck0000v1yd2ymng4um/" title="并发模式-1：Single Threaded Execution模式：能通过这座桥的只能有一个人" rel="bookmark">并发模式-1：Single Threaded Execution模式：能通过这座桥的只能有一个人</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckde6cvxs0000a5yd0wtz6h6h/" title="并发模式-2：Immutable不变模式" rel="bookmark">并发模式-2：Immutable不变模式</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckdzm6t9500009eyd7mgih05q/" title="并发模式-3：Guarded Suspension模式：保护暂停" rel="bookmark">并发模式-3：Guarded Suspension模式：保护暂停</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckdzpgvu20005e7yd6yeper0b/" title="并发模式-4：Balking模式：停止并返回" rel="bookmark">并发模式-4：Balking模式：停止并返回</a></h3></div></li></ul>
+    </div>
+  </section>
+
+
+  
+
+
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box reveal comments shadow">
+    <section class="article typo">
+      <p ct><i class="fas fa-comments"></i> 评论</p>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="gitalk-container"></div>
+        </section>
+      
+      
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '并发模式-5：Producer-Consumer模式：生产者消费者',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class="l_side">
+  
+  
+    
+    
+
+<section class="widget blogger shadow desktop mobile">
+  <div class="content">
+    
+      
+        <a class="avatar flat-box" href="/about/">
+          <img no-lazy src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/bubble.png">
+        </a>
+      
+    
+    
+      <div class="text">
+        
+        
+        
+          <p><span id="jinrishici-sentence">大泡泡的笔记</span></p>
+          <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+        
+      </div>
+    
+    
+      <div class="social-wrapper">
+        
+          
+            <a href="mailto:752820344@qq.com" class="social fas fa-envelope flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://github.com/bubblewu" class="social fab fa-github flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+      </div>
+    
+  </div>
+</section>
+
+  
+
+  
+    
+    
+
+
+  <section class="widget toc-wrapper shadow desktop mobile">
+    
+  <header>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class="name">本文目录</span>
+    
+  </header>
+
+
+    <div class="content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Producer-Consumer模式"><span class="toc-number">1.</span> <span class="toc-text">Producer-Consumer模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#三个角色"><span class="toc-number">1.1.</span> <span class="toc-text">三个角色</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Channel角色"><span class="toc-number">1.1.1.</span> <span class="toc-text">Channel角色</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#如何传递Data"><span class="toc-number">1.1.1.1.</span> <span class="toc-text">如何传递Data</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#存在意义"><span class="toc-number">1.1.1.2.</span> <span class="toc-text">存在意义</span></a></li></ol></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#案例"><span class="toc-number">2.</span> <span class="toc-text">案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#场景"><span class="toc-number">2.1.</span> <span class="toc-text">场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现"><span class="toc-number">2.2.</span> <span class="toc-text">实现</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展"><span class="toc-number">3.</span> <span class="toc-text">扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#常用队列"><span class="toc-number">3.1.</span> <span class="toc-text">常用队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#java-util-concurrent-Exchanger类交换缓冲区"><span class="toc-number">3.2.</span> <span class="toc-text">java.util.concurrent.Exchanger类交换缓冲区</span></a></li></ol></li></ol>
+    </div>
+  </section>
+
+
+  
+
+
+</aside>
+
+
+  
+  <footer class="clearfix">
+    <br><br>
+    
+      
+        <br>
+        <div class="social-wrapper">
+          
+            
+              <a href="mailto:752820344@qq.com" class="social fas fa-envelope flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+              </a>
+            
+          
+            
+              <a href="https://github.com/bubblewu" class="social fab fa-github flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+              </a>
+            
+          
+        </div>
+      
+    
+      
+        本站使用
+        <a href="https://volantis.js.org/" target="_blank" class="codename">Bubble</a>
+        作为主题，总访问量为
+          <span id="busuanzi_value_site_pv"><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span>
+          次
+        
+      
+    
+      
+        <div class="copyright">
+        <p><a href="https://bubblewu.github.io/">Copyright © 2020-2222 Bubble</a></p>
+
+        </div>
+      
+    
+  </footer>
+
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href="javascript:void(0)"></a>
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4/dist/jquery.min.js"></script>
+
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2/js/instant_page.js" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.6/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      ScrollReveal().reveal('.l_main .reveal', {
+        distance: '8px',
+        duration: '800',
+        interval: '100',
+        scale: '1'
+      });
+    });
+  </script>
+
+
+  
+<script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+  
+  
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js"></script>
+
+    <script type="text/javascript">
+      $(function(){
+        var imgs=["https://img.vim-cn.com/6d/a0c9e6f9efad8b731cb7376504bd10d79d2053.jpg", "https://cdn.jsdelivr.net/gh/xaoxuu/cdn-wallpaper/abstract/41F215B9-261F-48B4-80B5-4E86E165259E.jpeg"];
+        if ('false' == 'true') {
+          function shuffle(arr){
+            /*From countercurrent-time*/
+            var n = arr.length;
+            while(n--) {
+              var index = Math.floor(Math.random() * n);
+              var temp = arr[index];
+              arr[index] = arr[n];
+              arr[n] = temp;
+            }
+          }
+          shuffle(imgs);
+        }
+        if ('') {
+          $('').backstretch(
+            imgs,
+          {
+            duration: "20000",
+            fade: "1500"
+          });
+        } else {
+          $.backstretch(
+            imgs,
+          {
+            duration: "20000",
+            fade: "1500"
+          });
+        }
+      });
+    </script>
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: "9c3ba30f68564e88ff5a",
+      clientSecret: "96fdc1643060dc0b177fa05627e83eaba08781d8",
+      repo: "hexo-blog",
+      owner: "bubblewu",
+      admin: "bubblewu",
+      
+        id: location.pathname,      // Ensure uniqueness and length less than 50
+      
+      distractionFreeMode: false  // Facebook-like distraction free mode
+    });
+    gitalk.render('gitalk-container');
+  </script>
+
+
+
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2.6.5/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2.6.5/js/search.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2/js/comment_typing.js"></script>
+
+
+
+
+
+
+<!-- 复制 -->
+
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="fas fa-copy"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('fa-copy');
+        $icon.addClass('fa-check-circle');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('fa-check-circle');
+          $icon.addClass('fa-copy');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('fa-copy');
+        $icon.addClass('fa-times-circle');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('fa-times-circle');
+          $icon.addClass('fa-copy');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+
+
+<!-- fancybox -->
+
+  <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("div.fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>
