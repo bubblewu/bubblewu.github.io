@@ -360,9 +360,124 @@
         
           
         
+          
+        
       
     
     
+      
+        
+          <div class="post-wrapper">
+            <article class="post white-box shadow reveal ">
+  
+
+
+  <section class="meta">
+    
+      
+      
+      <div class="meta" id="header-meta">
+        
+          
+  <h2 class="title">
+    <a href="/ckdzcrcwd0000xkydcqnn0x4i/">
+      并发模式-3：Guarded Suspension模式：保护暂停
+    </a>
+  </h2>
+
+
+        
+        <div class="new-meta-box">
+          
+            
+          
+            
+              
+<div class="new-meta-item author">
+  <a href="https://bubblewu.github.io/" rel="nofollow">
+    <img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/bubble.png">
+    <p>大泡泡</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+  
+  <div class="new-meta-item category">
+    <a href="/categories/Java/%E5%B9%B6%E5%8F%91/" rel="nofollow">
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
+      <p>Java/并发</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              <div class="new-meta-item date">
+  <a class="notlink">
+    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+    <p>发布于：2020年8月18日</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+  <div class="new-meta-item wordcount">
+    <a class="notlink">
+      <i class="fas fa-keyboard fa-fw" aria-hidden="true"></i>
+      <p>字数：1.3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class="notlink">
+      <i class="fas fa-hourglass-half fa-fw" aria-hidden="true"></i>
+      <p>时长：5分钟</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              
+
+            
+          
+        </div>
+        
+          <hr>
+        
+      </div>
+    
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Guarded Suspension模式思想就是：<code>如果执行现在的处理会造成问题，那就让执行处理的线程进行等待</code>。<br><code>Guarded Suspension模式通过让线程等待来保护实例的安全性</code>。就像你没穿衣服，让快递员在门口等你一会儿来保护你的隐私一样。<br>也就是说，<code>该模式存在一个持有状态的对象，该对象只有在自身状态合适时，才会允许线程进行目标处理</code>。</p>
+<p><code>在Single Threaded Execution模式中，只要有一个线程进入临界区，其他线程就无法进入，只能等待</code>。而<code>在Guarded Suspension模式中，线程是否等待取决于守护条件</code>。后者是在前者基础上添加了附加条件而形成的。</p>
+      
+    </div>
+    
+      
+        <div class="button readmore">
+          <a href="/ckdzcrcwd0000xkydcqnn0x4i/">
+            阅读全文 <i class="fas fa-chevron-right"></i>
+          </a>
+        </div>
+      
+    
+  </section>
+</article>
+
+          </div>
+        
       
         
           <div class="post-wrapper">
@@ -1386,13 +1501,13 @@
     <div class="content">
       <ul class="entry navigation">
         
-          <li><a class="flat-box" title="/categories/Java/" href="/categories/Java/" id="categoriesJava"><div class="name">Java</div><div class="badge">(8)</div></a></li>
+          <li><a class="flat-box" title="/categories/Java/" href="/categories/Java/" id="categoriesJava"><div class="name">Java</div><div class="badge">(9)</div></a></li>
         
           <li><a class="flat-box child" title="/categories/Java/JVM/" href="/categories/Java/JVM/" id="categoriesJavaJVM"><div class="name">JVM</div><div class="badge">(2)</div></a></li>
         
           <li><a class="flat-box child" title="/categories/Java/Tool/" href="/categories/Java/Tool/" id="categoriesJavaTool"><div class="name">Tool</div><div class="badge">(1)</div></a></li>
         
-          <li><a class="flat-box child" title="/categories/Java/%E5%B9%B6%E5%8F%91/" href="/categories/Java/%E5%B9%B6%E5%8F%91/" id="categoriesJavaE5B9B6E58F91"><div class="name">并发</div><div class="badge">(3)</div></a></li>
+          <li><a class="flat-box child" title="/categories/Java/%E5%B9%B6%E5%8F%91/" href="/categories/Java/%E5%B9%B6%E5%8F%91/" id="categoriesJavaE5B9B6E58F91"><div class="name">并发</div><div class="badge">(4)</div></a></li>
         
           <li><a class="flat-box" title="/categories/Neo4j/" href="/categories/Neo4j/" id="categoriesNeo4j"><div class="name">Neo4j</div><div class="badge">(1)</div></a></li>
         
