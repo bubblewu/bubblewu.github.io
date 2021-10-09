@@ -441,9 +441,123 @@
         
           
         
+          
+        
       
     
     
+      
+        
+          <div class="post-wrapper">
+            <article class="post white-box shadow reveal ">
+  
+
+
+  <section class="meta">
+    
+      
+      
+      <div class="meta" id="header-meta">
+        
+          
+  <h2 class="title">
+    <a href="/ckujjz03a00007syd5ex780wz/">
+      并发模式-6：Read-Write Lock模式：读写锁
+    </a>
+  </h2>
+
+
+        
+        <div class="new-meta-box">
+          
+            
+          
+            
+              
+<div class="new-meta-item author">
+  <a href="https://bubblewu.github.io/" rel="nofollow">
+    <img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/bubble.png">
+    <p>大泡泡</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+  
+  <div class="new-meta-item category">
+    <a href="/categories/Java/%E5%B9%B6%E5%8F%91/" rel="nofollow">
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
+      <p>Java/并发</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              <div class="new-meta-item date">
+  <a class="notlink">
+    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+    <p>发布于：2021年10月9日</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+  <div class="new-meta-item wordcount">
+    <a class="notlink">
+      <i class="fas fa-keyboard fa-fw" aria-hidden="true"></i>
+      <p>字数：3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class="notlink">
+      <i class="fas fa-hourglass-half fa-fw" aria-hidden="true"></i>
+      <p>时长：13分钟</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              
+
+            
+          
+        </div>
+        
+          <hr>
+        
+      </div>
+    
+  </section>
+
+
+  <section class="article typo">
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Read-Write Lock模式：读写锁案例</p>
+      
+    </div>
+    
+      
+        <div class="button readmore">
+          <a href="/ckujjz03a00007syd5ex780wz/">
+            阅读全文 <i class="fas fa-chevron-right"></i>
+          </a>
+        </div>
+      
+    
+  </section>
+</article>
+
+          </div>
+        
       
         
           <div class="post-wrapper">
@@ -1470,120 +1584,6 @@
           </div>
         
       
-        
-          <div class="post-wrapper">
-            <article class="post white-box shadow reveal ">
-  
-
-
-  <section class="meta">
-    
-      
-      
-      <div class="meta" id="header-meta">
-        
-          
-  <h2 class="title">
-    <a href="/ckd70wo6w0009qlyd1yu5dnit/">
-      String类的intern()方法
-    </a>
-  </h2>
-
-
-        
-        <div class="new-meta-box">
-          
-            
-          
-            
-              
-<div class="new-meta-item author">
-  <a href="https://bubblewu.github.io/" rel="nofollow">
-    <img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/bubble.png">
-    <p>大泡泡</p>
-  </a>
-</div>
-
-            
-          
-            
-              
-  
-  <div class="new-meta-item category">
-    <a href="/categories/Java/" rel="nofollow">
-      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
-      <p>Java</p>
-    </a>
-  </div>
-
-
-            
-          
-            
-              <div class="new-meta-item date">
-  <a class="notlink">
-    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
-    <p>发布于：2020年6月14日</p>
-  </a>
-</div>
-
-            
-          
-            
-              
-  <div class="new-meta-item wordcount">
-    <a class="notlink">
-      <i class="fas fa-keyboard fa-fw" aria-hidden="true"></i>
-      <p>字数：1k字</p>
-    </a>
-  </div>
-  <div class="new-meta-item readtime">
-    <a class="notlink">
-      <i class="fas fa-hourglass-half fa-fw" aria-hidden="true"></i>
-      <p>时长：4分钟</p>
-    </a>
-  </div>
-
-
-            
-          
-            
-              
-
-            
-          
-        </div>
-        
-          <hr>
-        
-      </div>
-    
-  </section>
-
-
-  <section class="article typo">
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><code>String::intern()</code>是一个Native方法，用于返回该对象在常量池中的引用。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">native</span> String <span class="title">intern</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
-<p>作用：如果字符串常量池中已经包含一个等于该String对象的字符串，则返回代表池中这个字符串的String对象的引用；否则，会将此String对象包含的字符串添加到常量池中，并且返回此String对象的引用。</p>
-      
-    </div>
-    
-      
-        <div class="button readmore">
-          <a href="/ckd70wo6w0009qlyd1yu5dnit/">
-            阅读全文 <i class="fas fa-chevron-right"></i>
-          </a>
-        </div>
-      
-    
-  </section>
-</article>
-
-          </div>
-        
-      
     
   </section>
   
@@ -1705,13 +1705,13 @@
     <div class="content">
       <ul class="entry navigation">
         
-          <li><a class="flat-box" title="/categories/Java/" href="/categories/Java/" id="categoriesJava"><div class="name">Java</div><div class="badge">(11)</div></a></li>
+          <li><a class="flat-box" title="/categories/Java/" href="/categories/Java/" id="categoriesJava"><div class="name">Java</div><div class="badge">(12)</div></a></li>
         
           <li><a class="flat-box child" title="/categories/Java/JVM/" href="/categories/Java/JVM/" id="categoriesJavaJVM"><div class="name">JVM</div><div class="badge">(2)</div></a></li>
         
           <li><a class="flat-box child" title="/categories/Java/Tool/" href="/categories/Java/Tool/" id="categoriesJavaTool"><div class="name">Tool</div><div class="badge">(1)</div></a></li>
         
-          <li><a class="flat-box child" title="/categories/Java/%E5%B9%B6%E5%8F%91/" href="/categories/Java/%E5%B9%B6%E5%8F%91/" id="categoriesJavaE5B9B6E58F91"><div class="name">并发</div><div class="badge">(6)</div></a></li>
+          <li><a class="flat-box child" title="/categories/Java/%E5%B9%B6%E5%8F%91/" href="/categories/Java/%E5%B9%B6%E5%8F%91/" id="categoriesJavaE5B9B6E58F91"><div class="name">并发</div><div class="badge">(7)</div></a></li>
         
           <li><a class="flat-box" title="/categories/Neo4j/" href="/categories/Neo4j/" id="categoriesNeo4j"><div class="name">Neo4j</div><div class="badge">(1)</div></a></li>
         

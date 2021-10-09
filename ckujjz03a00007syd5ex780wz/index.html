@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html>
+<head hexo-theme="https://volantis.js.org/#20200605">
+  <meta charset="utf-8">
+  <!-- SEO相关 -->
+  
+    
+  
+  <!-- 渲染优化 -->
+  <meta name="renderer" content="webkit">
+  <meta name="force-rendering" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="HandheldFriendly" content="True">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <!-- 页面元数据 -->
+  
+    <title>并发模式-6：Read-Write Lock模式：读写锁 - 大泡泡的笔记</title>
+  
+    <meta name="keywords" content="Java,并发">
+  
+  
+    <meta name="description" content="Read-Write Lock模式：读写锁案例">
+  
+
+  <!-- feed -->
+  
+
+  <!-- import meta -->
+  
+    
+      <meta name="theme-color" content="#FFFFFF">
+    
+      <meta name="msapplication-TileColor" content="#1BC3FB">
+    
+      <meta name="msapplication-config" content="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/browserconfig.xml">
+    
+  
+
+  <!-- link -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.13/css/all.min.css">
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css">
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.css">
+
+  
+
+  
+  <link rel="shortcut icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/wongqingbin/PicGo/favicon.ico">
+  
+
+  
+
+  <!-- import link -->
+  
+  
+  <link rel="shortcut icon" type="image/x-icon" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicon.ico">
+  <link rel="icon" type="image/x-icon" sizes="32x32" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/favicon-32x32.png">
+  <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/apple-touch-icon.png">
+  <link rel="mask-icon" color="#1BC3FB" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/safari-pinned-tab.svg">
+  <link rel="manifest" href="https://cdn.jsdelivr.net/gh/xaoxuu/assets@master/favicon/favicons/site.webmanifest">
+  
+
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2.6.5/css/style.css">
+
+  
+
+  <script>
+    function setLoadingBarProgress(num) {
+      document.getElementById('loading-bar').style.width=num+"%";
+    }
+  </script>
+
+  
+  
+</head>
+
+<body>
+  
+  <div id="loading-bar-wrapper">
+  <div id="loading-bar"></div>
+</div>
+<header class="l_header shadow blur">
+  <div class="container">
+  <div class="wrapper">
+    <div class="nav-sub">
+      <p class="title"></p>
+      <ul class="switcher nav-list-h">
+        <li><a class="s-comment fas fa-comments fa-fw" target="_self" href="javascript:void(0)"></a></li>
+        
+          <li><a class="s-toc fas fa-list fa-fw" target="_self" href="javascript:void(0)"></a></li>
+        
+      </ul>
+    </div>
+		<div class="nav-main">
+      
+        
+        <a class="title flat-box" target="_self" href="/">
+          
+          
+          
+            Bubble
+          
+          
+        </a>
+      
+
+			<div class="menu navigation">
+				<ul class="nav-list-h">
+          
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/" id="home">
+                  <i class="fas fa-home fa-fw fa-fw"></i>主页
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/categories/" id="categories">
+                  <i class="fas fa-folder-open fa-fw"></i>分类
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/tags/" id="tags">
+                  <i class="fas fa-tags fa-fw"></i>标签
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box" href="/archives/" id="archives">
+                  <i class="fas fa-archive fa-fw"></i>时间轴
+                </a>
+                
+              </li>
+            
+          
+          
+            
+            
+              <li>
+                <a class="flat-box">
+                  <i class="fas fa-ellipsis-v fa-fw"></i>更多
+                </a>
+                
+                  <ul class="list-v">
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/about/" id="about">
+                  <i class="fas fa-info-circle fa-fw"></i>关于小站
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="https://github.com/bubblewu/hexo-blog" target="_blank" id="https:githubcombubblewuhexo-blog" rel="external nofollow noopener noreferrer">
+                  <i class="fab fa-github fa-fw"></i>博客源码
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/contributors/" id="contributors">
+                  <i class="fas fa-handshake fa-fw"></i>鸣谢
+                </a>
+                
+              </li>
+            
+          
+                    
+                  </ul>
+                
+              </li>
+            
+          
+          
+				</ul>
+			</div>
+
+      <div class="m_search">
+        <form name="searchform" class="form u-search-form">
+          <i class="icon fas fa-search fa-fw"></i>
+          <input type="text" class="input u-search-input" placeholder="Search...">
+        </form>
+      </div>
+
+			<ul class="switcher nav-list-h">
+				
+					<li><a class="s-search fas fa-search fa-fw" target="_self" href="javascript:void(0)"></a></li>
+				
+				<li>
+          <a class="s-menu fas fa-bars fa-fw" target="_self" href="javascript:void(0)"></a>
+          <ul class="menu-phone list-v navigation white-box">
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/" id="home">
+                  <i class="fas fa-home fa-fw fa-fw"></i>主页
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/categories/" id="categories">
+                  <i class="fas fa-folder-open fa-fw"></i>分类
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/tags/" id="tags">
+                  <i class="fas fa-tags fa-fw"></i>标签
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box" href="/archives/" id="archives">
+                  <i class="fas fa-archive fa-fw"></i>时间轴
+                </a>
+                
+              </li>
+            
+          
+            
+              
+            
+              <li>
+                <a class="flat-box">
+                  <i class="fas fa-ellipsis-v fa-fw"></i>更多
+                </a>
+                
+                  <ul class="list-v">
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/about/" id="about">
+                  <i class="fas fa-info-circle fa-fw"></i>关于小站
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="https://github.com/bubblewu/hexo-blog" target="_blank" id="https:githubcombubblewuhexo-blog" rel="external nofollow noopener noreferrer">
+                  <i class="fab fa-github fa-fw"></i>博客源码
+                </a>
+                
+              </li>
+            
+          
+                    
+                      
+            
+              <li>
+                <a class="flat-box" href="/contributors/" id="contributors">
+                  <i class="fas fa-handshake fa-fw"></i>鸣谢
+                </a>
+                
+              </li>
+            
+          
+                    
+                  </ul>
+                
+              </li>
+            
+          
+            
+          </ul>
+        </li>
+			</ul>
+		</div>
+	</div>
+  </div>
+</header>
+
+<script>setLoadingBarProgress(40);</script>
+
+
+
+  <div class="l_body nocover">
+    <div class="body-wrapper">
+      
+
+<div class="l_main">
+  
+
+  
+    <article id="post" class="post white-box reveal shadow article-type-post" itemscope itemprop="blogPost">
+      
+
+
+  <section class="meta">
+    
+      
+      
+      <div class="meta" id="header-meta">
+        
+          
+  <h1 class="title">
+    <a href="/ckujjz03a00007syd5ex780wz/">
+      并发模式-6：Read-Write Lock模式：读写锁
+    </a>
+  </h1>
+
+
+        
+        <div class="new-meta-box">
+          
+            
+          
+            
+              
+<div class="new-meta-item author">
+  <a href="https://bubblewu.github.io/" rel="nofollow">
+    <img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/bubble.png">
+    <p>大泡泡</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+  
+  <div class="new-meta-item category">
+    <a href="/categories/Java/%E5%B9%B6%E5%8F%91/" rel="nofollow">
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
+      <p>Java/并发</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              <div class="new-meta-item date">
+  <a class="notlink">
+    <i class="fas fa-calendar-alt fa-fw" aria-hidden="true"></i>
+    <p>发布于：2021年10月9日</p>
+  </a>
+</div>
+
+            
+          
+            
+              <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-10-09T16:48:37+08:00">
+  <a class="notlink">
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：2021年10月9日</p>
+  </a>
+</div>
+
+            
+          
+            
+              
+
+            
+          
+            
+              
+  <div class="new-meta-item wordcount">
+    <a class="notlink">
+      <i class="fas fa-keyboard fa-fw" aria-hidden="true"></i>
+      <p>字数：3k字</p>
+    </a>
+  </div>
+  <div class="new-meta-item readtime">
+    <a class="notlink">
+      <i class="fas fa-hourglass-half fa-fw" aria-hidden="true"></i>
+      <p>时长：13分钟</p>
+    </a>
+  </div>
+
+
+            
+          
+            
+              
+  
+    <div class="new-meta-item browse busuanzi">
+      <a class="notlink">
+        <i class="fas fa-eye fa-fw" aria-hidden="true"></i>
+        <p>
+          <span id="busuanzi_value_page_pv"></span>
+        </p>
+      </a>
+    </div>
+  
+
+
+            
+          
+        </div>
+        
+          <hr>
+        
+      </div>
+    
+  </section>
+
+
+      <section class="article typo">
+        <div class="article-entry" itemprop="articleBody">
+          
+          <p>Read-Write Lock模式：读写锁案例</p>
+<a id="more"></a>
+
+<h2 id="Read-Write-Lock模式"><a href="#Read-Write-Lock模式" class="headerlink" title="Read-Write Lock模式"></a>Read-Write Lock模式</h2><h3 id="生活小case"><a href="#生活小case" class="headerlink" title="生活小case"></a>生活小case</h3><p>课堂上老师讲解Java的并发知识，黑板上记录了许多干货。干货太多黑板没有空间了，老师要擦掉板书再继续写新的内容，然而学生都还没看完，不让老师擦掉。<br>这时，老师等待大家看完，再擦掉重新写。这个思想就是Read-Write Lock模式。</p>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>Read-Write Lock模式，即：<strong>读取和写入操作分开考虑，在执行读取操作之前线程必须获取用于读取的锁，同理写入之前也需获取用于写入的锁。</strong></p>
+<ul>
+<li><strong>线程读取操作时实例状态不变，故可多个线程同时读取，但不可写入；</strong></li>
+<li><strong>线程写入操作时会改变实例状态，故在此期间，其他线程不可读取或写入；</strong></li>
+</ul>
+<p>这样将针对写入和读取的互斥处理操作分开考虑，能够提高程序的性能。</p>
+<h3 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h3><ul>
+<li>适合读取操作繁重时；</li>
+<li>适合读取频率比写入频率高时；</li>
+</ul>
+<h2 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h2><h3 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h3><p>假设有一个Data类可以进行数据的读写，在多线程环境下对其进行读写操作。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><h4 id="主要模块"><a href="#主要模块" class="headerlink" title="主要模块"></a>主要模块</h4><p><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/concurrent/read-write.png" alt="Read-Write Lock模式案例图"></p>
+<table>
+<thead>
+<tr>
+<th>类名</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Main</td>
+<td>测试主类</td>
+</tr>
+<tr>
+<td>Data</td>
+<td>可以读写的类</td>
+</tr>
+<tr>
+<td>WriterThread</td>
+<td>表示写入线程的类</td>
+</tr>
+<tr>
+<td>ReaderThread</td>
+<td>表示读取线程的类</td>
+</tr>
+<tr>
+<td>ReadWriteLock</td>
+<td>提供读写锁的类</td>
+</tr>
+</tbody></table>
+<h4 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h4><ul>
+<li><p>Main函数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 启动6个读取线程和2个写入线程</span></span><br><span class="line">        <span class="comment">// 结果打印ReadThread读取的内容，当WriteThread写入时，输出会暂停一下。</span></span><br><span class="line">        <span class="comment">// reads日志中右边的10个字符是相同的，因为即使有线程冲突，程序的安全性是可以保证，否则会多个字符交叉在一起显示</span></span><br><span class="line">        Data data = <span class="keyword">new</span> Data(<span class="number">10</span>);</span><br><span class="line">        <span class="keyword">new</span> ReadThread(data).start();</span><br><span class="line">        <span class="keyword">new</span> ReadThread(data).start();</span><br><span class="line">        <span class="keyword">new</span> ReadThread(data).start();</span><br><span class="line">        <span class="keyword">new</span> ReadThread(data).start();</span><br><span class="line">        <span class="keyword">new</span> ReadThread(data).start();</span><br><span class="line">        <span class="keyword">new</span> ReadThread(data).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">new</span> WriteThread(data, <span class="string">"1234567890"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> WriteThread(data, <span class="string">"abcdefghijk"</span>).start();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Data数据操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.bubble.demo.read_write_lock;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 用于数据读写</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wu gang</span></span><br><span class="line"><span class="comment"> * date: 2021-10-08 18:50</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Data</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 实际读写对象的数组</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span>[] buffer;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 读写锁</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> ReadWriteLock lock = <span class="keyword">new</span> ReadWriteLock();</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 基于size初始化buffer数组，默认用字符*作为初始值来填充</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> size 数组长度</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Data</span><span class="params">(<span class="keyword">int</span> size)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.buffer = <span class="keyword">new</span> <span class="keyword">char</span>[size];</span><br><span class="line">        Arrays.fill(buffer, <span class="string">'*'</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">char</span>[] read() <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        lock.readLock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> doRead();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.readUnLock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">char</span>[] doRead() &#123;</span><br><span class="line">        <span class="keyword">char</span>[] newBuf = <span class="keyword">new</span> <span class="keyword">char</span>[buffer.length];</span><br><span class="line">        System.arraycopy(buffer, <span class="number">0</span>, newBuf, <span class="number">0</span>, buffer.length);</span><br><span class="line">        slowly();</span><br><span class="line">        <span class="keyword">return</span> newBuf;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">char</span> c)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        lock.writeLock();</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            doWrite(c);</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            lock.writeUnLock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doWrite</span><span class="params">(<span class="keyword">char</span> c)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; buffer.length; i++) &#123;</span><br><span class="line">            buffer[i] = c;</span><br><span class="line">            <span class="comment">// 假定写入操作比读取操作耗时久，每写入一个字符就sleep下</span></span><br><span class="line">            slowly();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 模拟耗时操作</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">slowly</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(<span class="number">50</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>读取线程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.bubble.demo.read_write_lock;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 对Data实例执行读取操作的线程</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wu gang</span></span><br><span class="line"><span class="comment"> * date: 2021-10-08 19:23</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Data data;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ReadThread</span><span class="params">(Data data)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.data = data;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">char</span>[] readBuf = data.read();</span><br><span class="line">                System.out.printf(<span class="string">"%s reads: %s%n"</span>, Thread.currentThread().getName(), String.valueOf(readBuf));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>写入线程</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.bubble.demo.read_write_lock;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 对Data实例执行写入操作的线程（无互斥处理相关代码）</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wu gang</span></span><br><span class="line"><span class="comment"> * date: 2021-10-08 19:23</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WriteThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Random RANDOM = <span class="keyword">new</span> Random();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Data data;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 程序逐个取出该字符串中的字符，并写入到Data实例中</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String filter;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WriteThread</span><span class="params">(Data data, String filter)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.data = data;</span><br><span class="line">        <span class="keyword">this</span>.filter = filter;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">char</span> c = nextChar();</span><br><span class="line">                data.write(c);</span><br><span class="line">                Thread.sleep(<span class="number">3000</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">char</span> <span class="title">nextChar</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">char</span> c = filter.charAt(index);</span><br><span class="line">        index++;</span><br><span class="line">        <span class="keyword">if</span> (index &gt;= filter.length()) &#123;</span><br><span class="line">            index = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> c;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>自定义读写锁</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.bubble.demo.read_write_lock;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 读写锁：</span></span><br><span class="line"><span class="comment"> * 防止下面的两种冲突：</span></span><br><span class="line"><span class="comment"> * - 读取和写入的冲突（read-write conflict）</span></span><br><span class="line"><span class="comment"> * - 写入和写入的冲突（write-write conflict）</span></span><br><span class="line"><span class="comment"> * 由于读取不涉及实例状态的变化，读取和读取之间无冲突。</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 实现时主要考虑下面两种情况：</span></span><br><span class="line"><span class="comment"> * 1、当线程想要获取读锁时：</span></span><br><span class="line"><span class="comment"> * - 如果有线程正在执行写入，则等待，避免read-write conflict；</span></span><br><span class="line"><span class="comment"> * - 如果有线程正在执行读取，则无需等待；</span></span><br><span class="line"><span class="comment"> * 2、当线程想要获取写锁时：</span></span><br><span class="line"><span class="comment"> * - 如果有线程正在执行写入，则等待，避免write-write conflict；</span></span><br><span class="line"><span class="comment"> * - 如果有线程正在执行读取，则等待，避免read-write conflict；</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> wu gang</span></span><br><span class="line"><span class="comment"> * date: 2021-10-08 18:52</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadWriteLock</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 实际正在读取中的线程个数。</span></span><br><span class="line"><span class="comment">     * 即执行了readLock但未执行readUnLock的线程个数，值一定大于0</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> readingReaders = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 正在等待写入的线程个数。</span></span><br><span class="line"><span class="comment">     * 即执行到writeLock之后，使用wait执行等待的线程的个数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> waitingWriters = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 实际正在写入中的线程个数。</span></span><br><span class="line"><span class="comment">     * 即执行了writeLock但未执行writeUnLock的线程个数，值只能是0或1。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> writeWriters = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 若写入优先则为true，否则读取优先。</span></span><br><span class="line"><span class="comment">     * 不降低线程的生存性，去掉不影响结果的输出。</span></span><br><span class="line"><span class="comment">     * 让ReadThread和WriteThread轮流优先执行，</span></span><br><span class="line"><span class="comment">     * 就像实际生活中车前进方向的信号灯和人行方向的信号灯轮流变为红灯一样。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> preferWriter = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">readLock</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">// 读时，如果有线程正在写入，避免冲突，wait</span></span><br><span class="line">        <span class="keyword">while</span> (writeWriters &gt; <span class="number">0</span> || (preferWriter &amp;&amp; waitingWriters &gt; <span class="number">0</span>)) &#123;</span><br><span class="line">            wait();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 实际正在读取的线程个数加1</span></span><br><span class="line">        readingReaders++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">readUnLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 实际正在读取的线程个数减1</span></span><br><span class="line">        readingReaders--;</span><br><span class="line">        preferWriter = <span class="keyword">true</span>;</span><br><span class="line">        notifyAll();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">writeLock</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="comment">// 正在等待的线程数量加1</span></span><br><span class="line">        waitingWriters++;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 写时，如果有线程正在读或写入，避免冲突，wait</span></span><br><span class="line">            <span class="keyword">while</span> (readingReaders &gt; <span class="number">0</span> || writeWriters &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                wait();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            <span class="comment">// 正在等待的线程数量减1</span></span><br><span class="line">            waitingWriters--;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 实际正在写入的线程数量加1</span></span><br><span class="line">        writeWriters++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">writeUnLock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 实际正在写入的线程数量减1</span></span><br><span class="line">        writeWriters--;</span><br><span class="line">        preferWriter = <span class="keyword">false</span>;</span><br><span class="line">        notifyAll();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+</ul>
+<h4 id="结果输出"><a href="#结果输出" class="headerlink" title="结果输出"></a>结果输出</h4><ul>
+<li><p>当reader角色正在读取，writer角色正在等待的情形<br><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/concurrent/when-reader.png" alt="当reader角色正在读取，writer角色正在等待的情形"></p>
+</li>
+<li><p>当一个writer角色正在写入，reader和其他writer角色正在等待的情形<br><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/concurrent/when-writer.png" alt="当一个writer角色正在写入，reader和其他writer角色正在等待的情形"></p>
+</li>
+</ul>
+<ul>
+<li><p>正常加读写锁输出<br>结果打印ReadThread读取的内容，当WriteThread写入时，输出会暂停一下。reads日志中右边的10个字符是相同的，因为即使有线程冲突，程序的安全性是可以保证，否则会多个字符交叉在一起显示。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">Thread-1 reads: **********</span><br><span class="line">Thread-0 reads: **********</span><br><span class="line">Thread-3 reads: **********</span><br><span class="line">Thread-2 reads: **********</span><br><span class="line">Thread-5 reads: **********</span><br><span class="line">Thread-4 reads: **********</span><br><span class="line">Thread-2 reads: aaaaaaaaaa</span><br><span class="line">Thread-4 reads: aaaaaaaaaa</span><br><span class="line">Thread-1 reads: aaaaaaaaaa</span><br><span class="line">Thread-5 reads: aaaaaaaaaa</span><br><span class="line">Thread-0 reads: aaaaaaaaaa</span><br><span class="line">Thread-3 reads: aaaaaaaaaa</span><br><span class="line">Thread-0 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-0 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>将读写锁换为synchronized关键字<br><code>耗时会更久</code>。</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">Thread-0 reads: **********</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-0 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-0 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-0 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-1 reads: 1111111111</span><br><span class="line">Thread-2 reads: 1111111111</span><br><span class="line">Thread-3 reads: 1111111111</span><br><span class="line">Thread-4 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-0 reads: 1111111111</span><br><span class="line">Thread-5 reads: 1111111111</span><br><span class="line">Thread-4 reads: bbbbbbbbbb</span><br><span class="line">Thread-3 reads: bbbbbbbbbb</span><br><span class="line">Thread-2 reads: bbbbbbbbbb</span><br><span class="line">Thread-1 reads: bbbbbbbbbb</span><br><span class="line">Thread-2 reads: bbbbbbbbbb</span><br><span class="line">Thread-3 reads: bbbbbbbbbb</span><br><span class="line">Thread-4 reads: bbbbbbbbbb</span><br><span class="line">Thread-5 reads: 2222222222</span><br><span class="line">Thread-0 reads: 2222222222</span><br><span class="line">Thread-5 reads: 2222222222</span><br><span class="line">Thread-4 reads: 2222222222</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>不加锁（去掉Data类中read和write方法中的锁），非线程安全的输出：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">Thread-1 reads: **********</span><br><span class="line">Thread-5 reads: **********</span><br><span class="line">Thread-2 reads: **********</span><br><span class="line">Thread-4 reads: **********</span><br><span class="line">Thread-3 reads: **********</span><br><span class="line">Thread-0 reads: **********</span><br><span class="line">Thread-5 reads: aa********</span><br><span class="line">Thread-2 reads: aa********</span><br><span class="line">Thread-4 reads: aa********</span><br><span class="line">Thread-1 reads: aa********</span><br><span class="line">Thread-3 reads: aa********</span><br><span class="line">Thread-0 reads: aa********</span><br><span class="line">Thread-2 reads: aaa*******</span><br><span class="line">Thread-1 reads: aaa*******</span><br><span class="line">Thread-4 reads: aaa*******</span><br><span class="line">Thread-5 reads: aaa*******</span><br><span class="line">Thread-3 reads: aaa*******</span><br><span class="line">Thread-0 reads: aaa*******</span><br><span class="line">Thread-2 reads: aaa1******</span><br><span class="line">Thread-4 reads: aaa1******</span><br><span class="line">Thread-1 reads: aaa1******</span><br><span class="line">Thread-5 reads: aaa1******</span><br><span class="line">Thread-3 reads: aaa1******</span><br><span class="line">Thread-0 reads: aaa1******</span><br><span class="line">Thread-2 reads: aaa1a*****</span><br><span class="line">Thread-1 reads: aaa1a*****</span><br><span class="line">Thread-4 reads: aaa1a*****</span><br><span class="line">Thread-5 reads: aaa1a*****</span><br><span class="line">Thread-3 reads: aaa1a*****</span><br><span class="line">Thread-4 reads: aaa1aaa***</span><br><span class="line">Thread-5 reads: aaa1aaa***</span><br><span class="line">Thread-3 reads: aaa1aaa***</span><br><span class="line">Thread-0 reads: aaa1aaa***</span><br><span class="line">Thread-1 reads: aaa1aaa***</span><br><span class="line">Thread-2 reads: aaa1aaaa**</span><br><span class="line">Thread-4 reads: aaa1aaaa**</span><br><span class="line">Thread-5 reads: aaa1aaaa**</span><br><span class="line">Thread-3 reads: aaa1aaaa**</span><br><span class="line">Thread-0 reads: aaa1aaaa**</span><br><span class="line">Thread-1 reads: aaa1aaaa**</span><br><span class="line">Thread-2 reads: aaa1aaaa1*</span><br><span class="line">Thread-4 reads: aaa1aaaa1*</span><br><span class="line">Thread-5 reads: aaa1aaaa1*</span><br><span class="line">Thread-3 reads: aaa1aaaa1*</span><br><span class="line">Thread-0 reads: aaa1aaaa1*</span><br><span class="line">Thread-1 reads: aaa1aaaa1a</span><br><span class="line">Thread-2 reads: aaa1aaaa1a</span><br><span class="line">Thread-4 reads: aaa1aaaa1a</span><br><span class="line">Thread-3 reads: aaa1aaaa1a</span><br><span class="line">Thread-0 reads: aaa1aaaa1a</span><br><span class="line">Thread-1 reads: aaa1aaaa1a</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h2><h3 id="juc包下的读写锁：ReentrantReadWriteLock"><a href="#juc包下的读写锁：ReentrantReadWriteLock" class="headerlink" title="juc包下的读写锁：ReentrantReadWriteLock"></a>juc包下的读写锁：ReentrantReadWriteLock</h3><p>java.util.concurrent.locks包下提供了<code>ReadWriteLock接口</code>和<code>ReentrantReadWriteLock实现类</code>，来提供Read-Write Lock模式的读写锁功能。</p>
+<h4 id="特征"><a href="#特征" class="headerlink" title="特征"></a>特征</h4><p>ReentrantReadWriteLock类的主要特征有：</p>
+<h5 id="1、公平性"><a href="#1、公平性" class="headerlink" title="1、公平性"></a>1、公平性</h5><p>在创建ReentrantReadWriteLock类的实例时，<strong>可以选择锁的获取顺序是否为公平（fair）的。</strong><br>如果创建的实例是<code>公平的</code>，那么<code>等待时间久的线程可以优先获取锁</code>。</p>
+<h5 id="2、可重入性"><a href="#2、可重入性" class="headerlink" title="2、可重入性"></a>2、可重入性</h5><p>ReentrantReadWriteLock类的锁是可重入的（Reentrant）。<br><code>可重入锁</code>：是指以<code>线程</code>为单位，<strong>当一个线程获取对象锁之后，这个线程可以再次获取本对象上的锁，而其他的线程是不可以的。</strong></p>
+<p>可参考：<a href="https://www.cnblogs.com/theRhyme/p/9133804.html" target="_blank" rel="external nofollow noopener noreferrer">JAVA可重入锁与不可重入锁</a></p>
+<blockquote>
+<ul>
+<li>synchronized和ReentrantReadWriteLock都是可重入锁；</li>
+<li><strong>意义</strong>：<code>防止死锁</code>。<blockquote>
+<p>如：子类覆写了父类的synchonized方法，然后调用父类中的方法，此时如果没有可重入的锁，那么这段代码将产生死锁。</p>
+</blockquote>
+</li>
+<li><code>实现原理</code>：<blockquote>
+<p><strong>为每一个锁关联一个请求计数器和一个占有它的线程。当计数为0时，即锁未被占有，线程请求时JVM将其记录为锁的占有者并将请求数记为1。如果同一个线程再次请求这个锁，计数器递增。</strong><br><strong>每次占用线程退出同步块时，计数器的值将递减，直到计数器为0，锁就会被释放。</strong></p>
+</blockquote>
+</li>
+<li><strong>一个线程执行<code>synchronized同步代码</code>时，再次重入该锁过程中，如果<code>抛出异常，会释放锁</code></strong>。<blockquote>
+<p>可参考：<a href="https://www.cnblogs.com/theRhyme/p/9133804.html" target="_blank" rel="external nofollow noopener noreferrer">线程执行SYNCHRONIZED同步代码块时再次重入该锁过程中抛异常,是否会释放锁
+</a></p>
+</blockquote>
+</li>
+</ul>
+</blockquote>
+<h5 id="3、锁降级"><a href="#3、锁降级" class="headerlink" title="3、锁降级"></a>3、锁降级</h5><p>ReentrantReadWriteLock类可以按照下面的顺序将<code>用于写入的锁</code>降级为<code>用于读取的锁</code>。</p>
+<blockquote>
+<p>获取用于写入的锁 -&gt; 获取用于读取的锁 -&gt; 释放用于写入的锁。</p>
+</blockquote>
+<p>注意：<strong>用于读取的锁不可以降级为用于写入的锁。</strong></p>
+<h5 id="4、便捷方法"><a href="#4、便捷方法" class="headerlink" title="4、便捷方法"></a>4、便捷方法</h5><p>提供了一些便捷方法：</p>
+<ul>
+<li>获取等待中的线程个数的方法：getQueueLength；</li>
+<li>检查是否获取了用于写入的锁的方法：isWriteLocked；</li>
+</ul>
+<h5 id="案例-1"><a href="#案例-1" class="headerlink" title="案例"></a>案例</h5><p>使用juc包下的读写锁RenentrantReadWriteLock来实现Data类。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line">package com.bubble.demo.read_write_lock;</span><br><span class="line"></span><br><span class="line">import java.util.Arrays;</span><br><span class="line">import java.util.concurrent.locks.Lock;</span><br><span class="line">import java.util.concurrent.locks.ReentrantReadWriteLock;</span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line"> * 基于juc下的ReentrantReadWriteLock读写锁来实现</span><br><span class="line"> *</span><br><span class="line"> * @author wu gang</span><br><span class="line"> * date: 2021-10-09 16:09</span><br><span class="line"> **&#x2F;</span><br><span class="line">public class DataByJUC &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 实际读写对象的数组</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private final char[] buffer;</span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 读写锁</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private final ReentrantReadWriteLock lock &#x3D; new ReentrantReadWriteLock(true);</span><br><span class="line">    private final Lock readLock &#x3D; lock.readLock();</span><br><span class="line">    private final Lock writeLock &#x3D; lock.writeLock();</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 基于size初始化buffer数组，默认用字符*作为初始值来填充</span><br><span class="line">     *</span><br><span class="line">     * @param size 数组长度</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public DataByJUC(int size) &#123;</span><br><span class="line">        this.buffer &#x3D; new char[size];</span><br><span class="line">        Arrays.fill(buffer, &#39;*&#39;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public char[] read() throws InterruptedException &#123;</span><br><span class="line">        readLock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            return doRead();</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            readLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private char[] doRead() &#123;</span><br><span class="line">        char[] newBuf &#x3D; new char[buffer.length];</span><br><span class="line">        System.arraycopy(buffer, 0, newBuf, 0, buffer.length);</span><br><span class="line">        slowly();</span><br><span class="line">        return newBuf;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void write(char c) throws InterruptedException &#123;</span><br><span class="line">        writeLock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            doWrite(c);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            writeLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void doWrite(char c) &#123;</span><br><span class="line">        for (int i &#x3D; 0; i &lt; buffer.length; i++) &#123;</span><br><span class="line">            buffer[i] &#x3D; c;</span><br><span class="line">            &#x2F;&#x2F; 假定写入操作比读取操作耗时久，每写入一个字符就sleep下</span><br><span class="line">            slowly();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 模拟耗时操作</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private void slowly() &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(50);</span><br><span class="line">        &#125; catch (InterruptedException ignored) &#123;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+          
+            <div class="article_footer">
+              
+                
+  
+    
+    
+
+
+
+  
+
+  
+    
+    
+
+
+
+  
+
+  
+    
+    
+
+<section class="widget qrcode  desktop mobile">
+  
+
+  <div class="content article-entry">
+    
+      
+        <div class="fancybox"><img src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/pay.jpeg" height="300px"></div>
+      
+    
+  </div>
+</section>
+
+  
+
+
+              
+            </div>
+          
+        </div>
+        
+          
+
+
+  <section class="meta" id="footer-meta">
+    <div class="new-meta-box">
+      
+        
+          <div class="new-meta-item date" itemprop="dateUpdated" datetime="2021-10-09T16:48:37+08:00">
+  <a class="notlink">
+    <i class="fas fa-edit fa-fw" aria-hidden="true"></i>
+    <p>更新于：2021年10月9日</p>
+  </a>
+</div>
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item category">
+    <a href="/categories/Java/%E5%B9%B6%E5%8F%91/" rel="nofollow">
+      <i class="fas fa-folder-open fa-fw" aria-hidden="true"></i>
+      <p>Java/并发</p>
+    </a>
+  </div>
+
+
+        
+      
+        
+          
+  
+  <div class="new-meta-item meta-tags"><a class="tag" href="/tags/Java/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>Java</p></a></div> <div class="new-meta-item meta-tags"><a class="tag" href="/tags/%E5%B9%B6%E5%8F%91/" rel="nofollow"><i class="fas fa-hashtag fa-fw" aria-hidden="true"></i><p>并发</p></a></div>
+
+
+        
+      
+        
+          
+  <div class="new-meta-item share -mob-share-list">
+  <div class="-mob-share-list share-body">
+    
+      
+        <a class="-mob-share-qq" title rel="external nofollow noopener noreferrer" href="http://connect.qq.com/widget/shareqq/index.html?url=https://bubblewu.github.io/ckujjz03a00007syd5ex780wz/&title=并发模式-6：Read-Write Lock模式：读写锁 - 大泡泡的笔记&summary=Read-Write Lock模式：读写锁案例" target="_blank">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qq.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-qzone" title rel="external nofollow noopener noreferrer" href="https://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=https://bubblewu.github.io/ckujjz03a00007syd5ex780wz/&title=并发模式-6：Read-Write Lock模式：读写锁 - 大泡泡的笔记&summary=Read-Write Lock模式：读写锁案例" target="_blank">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/qzone.png">
+          
+        </a>
+      
+    
+      
+        <a class="-mob-share-weibo" title rel="external nofollow noopener noreferrer" href="http://service.weibo.com/share/share.php?url=https://bubblewu.github.io/ckujjz03a00007syd5ex780wz/&title=并发模式-6：Read-Write Lock模式：读写锁 - 大泡泡的笔记&summary=Read-Write Lock模式：读写锁案例" target="_blank">
+          
+            <img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/weibo.png">
+          
+        </a>
+      
+    
+      
+        
+        <div class="hoverbox">
+          <a><img src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-assets/logo/128/wechat.png"></a>
+          <div class="target">
+            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATgAAAE4CAAAAADqFLC2AAADrElEQVR42u3aQW7cMBAEwP3/p517AEPs5kjiGsWbnDUllnJoT+/nx6rWBwE4cODAWeDAHQL3KdevG1/8+9Xn/v95er163/a84MCBAwcOHDhwp8GlN24fLD1Y+0JWX0x6XnDgwIEDBw4cuFPhLgPg4vXV718dbDmQlvvX5wUHDhw4cODAgfujcGkgTYPzFBQ4cODAgQMHDhy4vQfbHZhOFdzgwIEDBw4cOHDfDhcXtOGN7wJrA/RrTT44cODAgQMHDtwQXLp2A/Hb1/V5wYEDBw4cOHDgDoHbXbuFdPrzNMimgfdyP3DgwIEDBw4cuEPgdgeDV0BpIf25ae2eDxw4cODAgQMH7lvgVovgdJ/VYDwVxNti+tf9wIEDBw4cOHDgDoO7O2hOHfCuALz8PODAgQMHDhw4cF8C1wba6cJ4dyA6VWiDAwcOHDhw4MCdBjd9w3Tgmd7vrYIaHDhw4MCBAwfuFLjporcNoo8PJHcLaXDgwIEDBw4cuJfh0gdKr9ugmb7AqRc2NsgEBw4cOHDgwIF7CC4tkqcK7amB4y7cWJMPDhw4cODAgQP3Etx0sJwqotOBaRt84yYfHDhw4MCBAwfuJbi2SF4OjMNg04PV8SYfHDhw4MCBAwfuIbi26G2L4TSA7t6n/Y+w/JcDOHDgwIEDBw7cS3DtALEeBIZFcFp0py8qDvTgwIEDBw4cOHCHwu0Wvu0+aaHcAreDT3DgwIEDBw4cuNPg0kDaFs9t8GwL5ds+Bw4cOHDgwIEDdyhcO5iMi93hL/y1QTcOzODAgQMHDhw4cIfBtUF094C7gbQdvK4GbHDgwIEDBw4cuG+Bawvd9ouCq59rA/rqvssvFBw4cODAgQMH7jC43YCYFtBpsG4Dc7o/OHDgwIEDBw7ct8GlxW4bUFOg9PlayLFCGhw4cODAgQMH7iW49It57cBwat92v/S84MCBAwcOHDhwp8OlQTcdeLYgU4X5bmAHBw4cOHDgwIE7BW53tQPFdJC4GsinXwQ4cODAgQMHDtypcE8F3aeK56nr5UIaHDhw4MCBAwfuZbg08LYFcFuEt0X544U0OHDgwIEDBw7cS3C7D9oGzalB526gv7wGBw4cOHDgwIH7o3Bt4JwaRKYFdVqkgwMHDhw4cODA/XW41X3uDsY/4Xo9AIMDBw4cOHDgwJVw6cZPB9cUdDyQgwMHDhw4cODAHQa3W+CmgXn6fqsA7fOBAwcOHDhw4MCdBmeFg04E4MCBA2eBA/fu+gfMugAmNdR33QAAAABJRU5ErkJggg==">
+          </div>
+        </div>
+      
+    
+  </div>
+</div>
+
+
+
+        
+      
+    </div>
+  </section>
+
+
+        
+        
+          <div class="prev-next">
+            
+            
+              <a class="next" href="/ckdzpgvtp0000e7ydh7rl9onx/">
+                <p class="title">并发模式-5：Producer-Consumer模式：生产者消费者<i class="fas fa-chevron-right" aria-hidden="true"></i></p>
+                <p class="content">生产者消费者模式，即N个线程进行生产，同时N个线程进行消费，两种角色通过内存缓冲区进行通信。
+
+
+Producer-Consumer模式生产者消费者模式，即N个线程进行生产，同时N个线程进行消费...</p>
+              </a>
+            
+          </div>
+        
+      </section>
+    </article>
+  
+
+  
+    
+  
+    
+    
+  
+
+  <section class="widget related_posts shadow desktop mobile">
+    
+  <header>
+    
+      <i class="fas fa-bookmark fa-fw" aria-hidden="true"></i><span class="name">相关文章</span>
+    
+  </header>
+
+
+    <div class="content">
+      <ul class="popular-posts"><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckd70wo7j0017qlydgj2w1nq3/" title="并发：多线程程序的评价标准" rel="bookmark">并发：多线程程序的评价标准</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckd8g12ck0000v1yd2ymng4um/" title="并发模式-1：Single Threaded Execution模式：能通过这座桥的只能有一个人" rel="bookmark">并发模式-1：Single Threaded Execution模式：能通过这座桥的只能有一个人</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckde6cvxs0000a5yd0wtz6h6h/" title="并发模式-2：Immutable不变模式" rel="bookmark">并发模式-2：Immutable不变模式</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckdzm6t9500009eyd7mgih05q/" title="并发模式-3：Guarded Suspension模式：保护暂停" rel="bookmark">并发模式-3：Guarded Suspension模式：保护暂停</a></h3></div></li><li class="popular-posts-item"><div class="popular-posts-title"><h3><a href="/ckdzpgvtp0000e7ydh7rl9onx/" title="并发模式-5：Producer-Consumer模式：生产者消费者" rel="bookmark">并发模式-5：Producer-Consumer模式：生产者消费者</a></h3></div></li></ul>
+    </div>
+  </section>
+
+
+  
+
+
+  
+
+  
+    <!-- 显示推荐文章和评论 -->
+
+
+
+  <article class="post white-box reveal comments shadow">
+    <section class="article typo">
+      <p ct><i class="fas fa-comments"></i> 评论</p>
+      
+      
+      
+      
+        <section id="comments">
+          <div id="gitalk-container"></div>
+        </section>
+      
+      
+      
+    </section>
+  </article>
+
+
+  
+
+
+
+
+<!-- 根据页面mathjax变量决定是否加载MathJax数学公式js -->
+
+
+
+  <script>
+    window.subData = {
+      title: '并发模式-6：Read-Write Lock模式：读写锁',
+      tools: true
+    }
+  </script>
+
+
+</div>
+<aside class="l_side">
+  
+  
+    
+    
+
+<section class="widget blogger shadow desktop mobile">
+  <div class="content">
+    
+      
+        <a class="avatar flat-box" href="/about/">
+          <img no-lazy src="https://cdn.jsdelivr.net/gh/bubblewu/cdn/images/bubble.png">
+        </a>
+      
+    
+    
+      <div class="text">
+        
+        
+        
+          <p><span id="jinrishici-sentence">大泡泡的笔记</span></p>
+          <script src="https://sdk.jinrishici.com/v2/browser/jinrishici.js" charset="utf-8"></script>
+        
+      </div>
+    
+    
+      <div class="social-wrapper">
+        
+          
+            <a href="mailto:752820344@qq.com" class="social fas fa-envelope flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+          
+            <a href="https://github.com/bubblewu" class="social fab fa-github flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+            </a>
+          
+        
+      </div>
+    
+  </div>
+</section>
+
+  
+
+  
+    
+    
+
+
+  <section class="widget toc-wrapper shadow desktop mobile">
+    
+  <header>
+    
+      <i class="fas fa-list fa-fw" aria-hidden="true"></i><span class="name">本文目录</span>
+    
+  </header>
+
+
+    <div class="content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Read-Write-Lock模式"><span class="toc-number">1.</span> <span class="toc-text">Read-Write Lock模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#生活小case"><span class="toc-number">1.1.</span> <span class="toc-text">生活小case</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.2.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#适用场景"><span class="toc-number">1.3.</span> <span class="toc-text">适用场景</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#案例"><span class="toc-number">2.</span> <span class="toc-text">案例</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#场景"><span class="toc-number">2.1.</span> <span class="toc-text">场景</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#实现"><span class="toc-number">2.2.</span> <span class="toc-text">实现</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#主要模块"><span class="toc-number">2.2.1.</span> <span class="toc-text">主要模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#代码"><span class="toc-number">2.2.2.</span> <span class="toc-text">代码</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#结果输出"><span class="toc-number">2.2.3.</span> <span class="toc-text">结果输出</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#扩展"><span class="toc-number">3.</span> <span class="toc-text">扩展</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#juc包下的读写锁：ReentrantReadWriteLock"><span class="toc-number">3.1.</span> <span class="toc-text">juc包下的读写锁：ReentrantReadWriteLock</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#特征"><span class="toc-number">3.1.1.</span> <span class="toc-text">特征</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#1、公平性"><span class="toc-number">3.1.1.1.</span> <span class="toc-text">1、公平性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#2、可重入性"><span class="toc-number">3.1.1.2.</span> <span class="toc-text">2、可重入性</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#3、锁降级"><span class="toc-number">3.1.1.3.</span> <span class="toc-text">3、锁降级</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#4、便捷方法"><span class="toc-number">3.1.1.4.</span> <span class="toc-text">4、便捷方法</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#案例-1"><span class="toc-number">3.1.1.5.</span> <span class="toc-text">案例</span></a></li></ol></li></ol></li></ol></li></ol>
+    </div>
+  </section>
+
+
+  
+
+
+</aside>
+
+
+  
+  <footer class="clearfix">
+    <br><br>
+    
+      
+        <br>
+        <div class="social-wrapper">
+          
+            
+              <a href="mailto:752820344@qq.com" class="social fas fa-envelope flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+              </a>
+            
+          
+            
+              <a href="https://github.com/bubblewu" class="social fab fa-github flat-btn" target="_blank" rel="external nofollow noopener noreferrer">
+              </a>
+            
+          
+        </div>
+      
+    
+      
+        本站使用
+        <a href="https://volantis.js.org/" target="_blank" class="codename">Bubble</a>
+        作为主题，总访问量为
+          <span id="busuanzi_value_site_pv"><i class="fas fa-circle-notch fa-spin fa-fw" aria-hidden="true"></i></span>
+          次
+        
+      
+    
+      
+        <div class="copyright">
+        <p><a href="https://bubblewu.github.io/">Copyright © 2020-2222 Bubble</a></p>
+
+        </div>
+      
+    
+  </footer>
+
+<script>setLoadingBarProgress(80);</script>
+
+
+      <script>setLoadingBarProgress(60);</script>
+    </div>
+    <a class="s-top fas fa-arrow-up fa-fw" href="javascript:void(0)"></a>
+  </div>
+  
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4/dist/jquery.min.js"></script>
+
+
+  <script>
+    
+    var SEARCH_SERVICE = "hexo" || "hexo";
+    var ROOT = "/" || "/";
+    if (!ROOT.endsWith('/')) ROOT += '/';
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2/js/instant_page.js" type="module" defer integrity="sha384-OeDn4XE77tdHo8pGtE1apMPmAipjoxUQ++eeJa6EtJCfHlvijigWiJpD7VDPWXV1"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/scrollreveal@4.0.6/dist/scrollreveal.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      ScrollReveal().reveal('.l_main .reveal', {
+        distance: '8px',
+        duration: '800',
+        interval: '100',
+        scale: '1'
+      });
+    });
+  </script>
+
+
+  
+<script src="https://cdn.jsdelivr.net/npm/node-waves@0.7.6/dist/waves.min.js"></script>
+
+  <script type="text/javascript">
+    $(function() {
+      Waves.attach('.flat-btn', ['waves-button']);
+      Waves.attach('.float-btn', ['waves-button', 'waves-float']);
+      Waves.attach('.float-btn-light', ['waves-button', 'waves-float', 'waves-light']);
+      Waves.attach('.flat-box', ['waves-block']);
+      Waves.attach('.float-box', ['waves-block', 'waves-float']);
+      Waves.attach('.waves-image');
+      Waves.init();
+    });
+  </script>
+
+
+  <script async src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-busuanzi@2.3/js/busuanzi.pure.mini.js"></script>
+
+
+
+  
+  
+  
+    
+<script src="https://cdn.jsdelivr.net/npm/jquery-backstretch@2.1.18/jquery.backstretch.min.js"></script>
+
+    <script type="text/javascript">
+      $(function(){
+        var imgs=["https://img.vim-cn.com/6d/a0c9e6f9efad8b731cb7376504bd10d79d2053.jpg", "https://cdn.jsdelivr.net/gh/xaoxuu/cdn-wallpaper/abstract/41F215B9-261F-48B4-80B5-4E86E165259E.jpeg"];
+        if ('false' == 'true') {
+          function shuffle(arr){
+            /*From countercurrent-time*/
+            var n = arr.length;
+            while(n--) {
+              var index = Math.floor(Math.random() * n);
+              var temp = arr[index];
+              arr[index] = arr[n];
+              arr[n] = temp;
+            }
+          }
+          shuffle(imgs);
+        }
+        if ('') {
+          $('').backstretch(
+            imgs,
+          {
+            duration: "20000",
+            fade: "1500"
+          });
+        } else {
+          $.backstretch(
+            imgs,
+          {
+            duration: "20000",
+            fade: "1500"
+          });
+        }
+      });
+    </script>
+  
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+  <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+  <script type="text/javascript">
+    var gitalk = new Gitalk({
+      clientID: "9c3ba30f68564e88ff5a",
+      clientSecret: "96fdc1643060dc0b177fa05627e83eaba08781d8",
+      repo: "hexo-blog",
+      owner: "bubblewu",
+      admin: "bubblewu",
+      
+        id: location.pathname,      // Ensure uniqueness and length less than 50
+      
+      distractionFreeMode: false  // Facebook-like distraction free mode
+    });
+    gitalk.render('gitalk-container');
+  </script>
+
+
+
+
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2.6.5/js/app.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2.6.5/js/search.js"></script>
+
+
+
+  
+<script src="https://cdn.jsdelivr.net/gh/xaoxuu/cdn-volantis@2/js/comment_typing.js"></script>
+
+
+
+
+
+
+<!-- 复制 -->
+
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
+<script>
+  function wait(callback, seconds) {
+    var timelag = null;
+    timelag = window.setTimeout(callback, seconds);
+  }
+  !function (e, t, a) {
+    var initCopyCode = function(){
+      var copyHtml = '';
+      copyHtml += '<button class="btn-copy" data-clipboard-snippet="">';
+      copyHtml += '<i class="fas fa-copy"></i><span>COPY</span>';
+      copyHtml += '</button>';
+      $(".highlight .code pre").before(copyHtml);
+      $(".article pre code").before(copyHtml);
+      var clipboard = new ClipboardJS('.btn-copy', {
+        target: function(trigger) {
+          return trigger.nextElementSibling;
+        }
+      });
+      clipboard.on('success', function(e) {
+        let $btn = $(e.trigger);
+        $btn.addClass('copied');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('fa-copy');
+        $icon.addClass('fa-check-circle');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPIED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('fa-check-circle');
+          $icon.addClass('fa-copy');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+      clipboard.on('error', function(e) {
+        e.clearSelection();
+        let $btn = $(e.trigger);
+        $btn.addClass('copy-failed');
+        let $icon = $($btn.find('i'));
+        $icon.removeClass('fa-copy');
+        $icon.addClass('fa-times-circle');
+        let $span = $($btn.find('span'));
+        $span[0].innerText = 'COPY FAILED';
+        
+        wait(function () { // 等待两秒钟后恢复
+          $icon.removeClass('fa-times-circle');
+          $icon.addClass('fa-copy');
+          $span[0].innerText = 'COPY';
+        }, 2000);
+      });
+    }
+    initCopyCode();
+  }(window, document);
+</script>
+
+
+
+
+<!-- fancybox -->
+
+  <script src="https://cdn.jsdelivr.net/gh/fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
+<script>
+  let LAZY_LOAD_IMAGE = "";
+  $(".article-entry").find("div.fancybox").find("img").each(function () {
+      var element = document.createElement("a");
+      $(element).attr("data-fancybox", "gallery");
+      $(element).attr("href", $(this).attr("src"));
+      /* 图片采用懒加载处理时,
+       * 一般图片标签内会有个属性名来存放图片的真实地址，比如 data-original,
+       * 那么此处将原本的属性名src替换为对应属性名data-original,
+       * 修改如下
+       */
+       if (LAZY_LOAD_IMAGE) {
+         $(element).attr("href", $(this).attr("data-original"));
+       }
+      $(this).wrap(element);
+  });
+</script>
+
+
+
+
+
+
+  <script>setLoadingBarProgress(100);</script>
+</body>
+</html>
